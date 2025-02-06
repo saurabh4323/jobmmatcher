@@ -13,7 +13,7 @@ export async function GET(req, { params }) {
 
   try {
     const api_endpoint = "https://nubela.co/proxycurl/api/v2/linkedin";
-    const api_key = "OZ49GF4S4U4pCbB_1Cp0uQ";
+    const api_key = "zwgixWRwh_Yla3W8P-d62w";
 
     // Remove any remaining 'https://' or 'http://' if present
     const cleanUrl = linkedinUrl.replace(/^https?:\/\//, "");
