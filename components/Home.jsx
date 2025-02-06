@@ -60,7 +60,12 @@ const JobPlatform = () => {
       }
       router.push("/dashboard");
     } catch (error) {
-      console.error("Error fetching LinkedIn data:", error);
+      console.log("Full error object:", error);
+      console.log("Response data:", error.response?.data);
+      console.error(
+        "Error fetching LinkedIn data:",
+        error.response?.data?.error || error.message
+      );
     } finally {
       setIsAnalyzing(false);
     }
@@ -68,7 +73,7 @@ const JobPlatform = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
-      <Navbar></Navbar>
+      {/* <Navbar></Navbar> */}
 
       <div className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto text-center">

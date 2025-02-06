@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Rocket,
@@ -26,7 +26,13 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const [show, setshow] = useState(false);
+  useEffect(() => {
+    const login = localStorage.getItem("tokenid");
+    if (login) {
+      setshow(true);
+    }
+  }, []);
   return (
     <div>
       {" "}
@@ -35,13 +41,15 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center space-x-2">
               <Rocket className="h-8 w-8 text-blue-500" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-                JobMatcher
-              </span>
+              <Link href="/">
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                  CareerLens
+                </span>
+              </Link>
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
-              {["Dashboard", "Jobs", "Skills", "Network"].map((item) => (
+              {["Dashboard", "Jobs", "Skills", "Resume"].map((item) => (
                 <Link href={`/${item.toLowerCase()}`} key={item}>
                   <button className="px-4 py-2 text-gray-400 hover:text-blue-500 transition-colors relative group">
                     {item}
@@ -55,8 +63,24 @@ export default function Navbar() {
               <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors">
                 <Bell className="h-5 w-5" />
               </button>
+
               <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2">
-                <span>Get Started</span>
+                {show ? (
+                  <span
+                    onClick={() => {
+                      localStorage.removeItem("tokenid");
+                      localStorage.removeItem("profiledata");
+                      window.location.href = "/";
+                    }}
+                  >
+                    Logout
+                  </span>
+                ) : (
+                  <Link href="/register">
+                    {" "}
+                    <span>Get Started</span>{" "}
+                  </Link>
+                )}
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
