@@ -59,7 +59,7 @@ export default function Navbar() {
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/jobs">Jobs</Link>
           <Link href="/resume">Resume</Link>
-          <Link href="/index">index</Link>
+          {/* <Link href="/index">index</Link> */}
         </div>
 
         <div className="navbar-buttons">
