@@ -1,0 +1,270 @@
+.hero {
+  background-color: #1c1d31;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 1rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 4rem;
+  color: #ccc;
+  font-size: 1.1rem;
+}
+
+.stripe-link {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+.feature-card {
+  background-color: rgba(30, 30, 45, 0.7);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: #fff;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.feature-content {
+  display: flex;
+  flex-direction: column;
+  height: 250px;
+  justify-content: space-between;
+}
+
+.cash-accrual {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.toggle {
+  display: flex;
+  background-color: rgba(20, 20, 30, 0.7);
+  border-radius: 2rem;
+  padding: 0.25rem;
+}
+
+.toggle-option {
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  cursor: pointer;
+}
+
+.toggle-option.active {
+  background-color: #1d4ed8;
+  color: #12111d;
+}
+
+.selected-option {
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+}
+
+.feature-footer {
+  color: #888;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+.revenue-recognition {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(20, 20, 30, 0.7);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.chevron-right {
+  font-weight: bold;
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  height: 150px;
+}
+
+.chart-bars {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 120px;
+  gap: 0.5rem;
+}
+
+.bar {
+  width: 12px;
+  background-color: #1d4ed8;
+  border-radius: 2px;
+}
+
+.bar.striped {
+  background-image: linear-gradient(
+    45deg,
+    #0dcc7a 25%,
+    #0ab868 25%,
+    #0ab868 50%,
+    #0dcc7a 50%,
+    #0dcc7a 75%,
+    #0ab868 75%,
+    #0ab868 100%
+  );
+  background-size: 10px 10px;
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.metric-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-circle.blue {
+  background: conic-gradient(#0dcc7a 0% 98%, transparent 98% 100%);
+}
+
+.metric-circle.purple {
+  background: conic-gradient(#a64dff 0% 90%, transparent 90% 100%);
+}
+
+.metric-inner {
+  width: 70%;
+  height: 70%;
+  background-color: #12111d;
+  border-radius: 50%;
+}
+
+.metric-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-value {
+  font-weight: 500;
+}
+
+.metric-label {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.comparison-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comparison-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comparison-left {
+  color: #0dcc7a;
+}
+
+.comparison-arrow {
+  color: #888;
+}
+
+.comparison-right {
+  color: #ff6b6b;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    height: auto;
+  }
+
+  .feature-content {
+    height: auto;
+    min-height: 200px;
+  }
+}

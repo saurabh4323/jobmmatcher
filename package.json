@@ -13,6 +13,7 @@
     "bcryptjs": "^2.4.3",
     "daisyui": "^4.12.23",
     "dotenv": "^16.4.7",
+    "framer-motion": "^12.6.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.474.0",
     "mongoose": "^8.10.0",
@@ -22,7 +23,8 @@
     "puppeteer": "^24.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-to-print": "^3.0.5"
+    "react-to-print": "^3.0.5",
+    "resend": "^4.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

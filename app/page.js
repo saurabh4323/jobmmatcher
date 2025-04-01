@@ -1,6 +1,7 @@
 import JobPlatform from "@/components/Home";
 import React from "react";
 import Head from "next/head";
+import Hero from "@/components/Hero";
 export default function page() {
   <Head>
     <title>JOb Matcher</title>
@@ -9,7 +10,8 @@ export default function page() {
   </Head>;
   return (
     <div>
-      <JobPlatform></JobPlatform>
+      {/* <JobPlatform></JobPlatform> */}
+      <Hero></Hero>
     </div>
   );
 }

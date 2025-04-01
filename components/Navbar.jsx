@@ -1,103 +1,90 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Rocket,
-  Terminal,
-  Brain,
-  Briefcase,
-  Award,
-  ChevronRight,
-  Database,
-  Code,
-  Cpu,
-  LineChart,
-  Users,
-  Zap,
-  Search,
-  Bell,
-  Menu,
-  X,
-  ExternalLink,
-  Info,
-} from "lucide-react";
-import axios from "axios";
+import "./nav.css";
+// import useRouter from "next/navigation";
+import { Menu, X } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
+// import { useRouter } from "next/router";
 export default function Navbar() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [show, setshow] = useState(false);
+  const [show, setShow] = useState(false);
+
   useEffect(() => {
     const login = localStorage.getItem("tokenid");
     if (login) {
-      setshow(true);
+      setShow(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      setShow(true);
+    }
+  }, [status]);
+
   return (
-    <div>
-      {" "}
-      <nav className="fixed w-full bg-gray-900/80 backdrop-blur-lg border-b border-gray-800 z-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center space-x-2">
-              <Rocket className="h-8 w-8 text-blue-500" />
-              <Link href="/">
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-                  CareerLens
-                </span>
-              </Link>
+    <nav className="navbar">
+      <div className="navbar-container">
+        <div className="navbar-logo">
+          <Link href="/">
+            <div className="logo-container">
+              <div className="logo-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                  <line x1="9" y1="9" x2="9.01" y2="9" />
+                  <line x1="15" y1="9" x2="15.01" y2="9" />
+                </svg>
+              </div>
+              <span className="logo-text">Skillo</span>
             </div>
-
-            <div className="hidden md:flex items-center space-x-8">
-              {["Dashboard", "Jobs", "Skills", "Resume"].map((item) => (
-                <Link href={`/${item.toLowerCase()}`} key={item}>
-                  <button className="px-4 py-2 text-gray-400 hover:text-blue-500 transition-colors relative group">
-                    {item}
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-                  </button>
-                </Link>
-              ))}
-            </div>
-
-            <div className="hidden md:flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors">
-                <Bell className="h-5 w-5" />
-              </button>
-
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2">
-                {show ? (
-                  <span
-                    onClick={() => {
-                      localStorage.removeItem("tokenid");
-                      localStorage.removeItem("profiledata");
-                      window.location.href = "/";
-                    }}
-                  >
-                    Logout
-                  </span>
-                ) : (
-                  <Link href="/register">
-                    {" "}
-                    <span>Get Started</span>{" "}
-                  </Link>
-                )}
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-
-            <button
-              className="md:hidden p-2 text-gray-400 hover:text-white"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              {menuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
-          </div>
+          </Link>
         </div>
-      </nav>
-    </div>
+
+        <div className={`navbar-links ${menuOpen ? "active" : ""}`}>
+          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/jobs">Jobs</Link>
+          <Link href="/resume">Resume</Link>
+          <Link href="/index">index</Link>
+        </div>
+
+        <div className="navbar-buttons">
+          {status == "authenticated" ? (
+            <img
+              onClick={() => {
+                router.push("/profile");
+              }}
+              src={session.user.image}
+              style={{ width: "40px", borderRadius: "20px", cursor: "pointer" }}
+            ></img>
+          ) : (
+            <Link href="/register" className="btn btn-primary">
+              Get started for free
+            </Link>
+          )}
+        </div>
+
+        <div
+          className="navbar-mobile-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+        </div>
+      </div>
+    </nav>
   );
 }

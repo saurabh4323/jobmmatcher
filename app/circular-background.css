@@ -1,0 +1,103 @@
+/* Animated Circles Background CSS */
+.circle-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1; /* Ensures it stays behind content */
+  background-color: #f0f0f0;
+}
+
+/* Create the circles */
+.circle-background::before,
+.circle-background::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+/* Larger circle */
+.circle-background::before {
+  width: 60vmin;
+  height: 60vmin;
+  border: 2px solid rgba(100, 100, 255, 0.5);
+  animation: pulse 8s infinite alternate, rotate 20s linear infinite;
+}
+
+/* Smaller circle */
+.circle-background::after {
+  width: 30vmin;
+  height: 30vmin;
+  border: 2px solid rgba(255, 100, 100, 0.5);
+  animation: pulse 6s infinite alternate-reverse,
+    rotate-reverse 15s linear infinite;
+}
+
+/* Additional circles */
+.circle-1,
+.circle-2,
+.circle-3 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 1px;
+  opacity: 0.5;
+}
+
+.circle-1 {
+  width: 90vmin;
+  height: 90vmin;
+  border-color: rgba(100, 255, 100, 0.5);
+  animation: pulse 10s infinite alternate, rotate 25s linear infinite;
+}
+
+.circle-2 {
+  width: 45vmin;
+  height: 45vmin;
+  border-color: rgba(255, 255, 100, 0.5);
+  animation: pulse 7s infinite alternate, rotate-reverse 18s linear infinite;
+}
+
+.circle-3 {
+  width: 15vmin;
+  height: 15vmin;
+  border-color: rgba(255, 100, 255, 0.5);
+  animation: pulse 5s infinite alternate-reverse, rotate 12s linear infinite;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes rotate-reverse {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const MONGODB_URI =
-  "mongodb+srv://saurabhiitr:saurabh8810@cluster0.r522b.mongodb.net/";
+  "mongodb+srv://saurabhiitr:saurabh8810@cluster0.jg0vdfg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 let cached = global.mongoose;
 
 if (!cached) {

@@ -2,8 +2,14 @@
 import React, { useState } from "react";
 import { Linkedin, Lock, Mail, User } from "lucide-react";
 import axios from "axios";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const AuthPage = () => {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("login");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -11,6 +17,11 @@ const AuthPage = () => {
     email: "",
     password: "",
   });
+  useEffect(() => {
+    if (status !== "loading") {
+      setIsLoading(false);
+    }
+  }, [status]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -45,7 +56,10 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div
+      className="min-h-screen  flex items-center justify-center p-4"
+      style={{ marginTop: "100px", backgroundColor: "#1c1d31" }}
+    >
       <div className="w-full max-w-md bg-slate-900 rounded-lg border border-blue-500/20 p-6">
         {/* Logo */}
         <div className="flex items-center justify-center mb-6">
@@ -137,6 +151,7 @@ const AuthPage = () => {
                 />
               </div>
             </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -150,6 +165,14 @@ const AuthPage = () => {
             </button>
           </form>
         </div>
+        <button
+          type="submit"
+          onClick={() => router.push("/login")}
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors mt-5 disabled:opacity-50"
+        >
+          Continue with google
+        </button>
 
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
