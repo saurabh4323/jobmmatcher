@@ -1,6 +1,7 @@
 "use client";
 import { Geist_Mono } from "next/font/google"; // Remove invalid Geist import
 import "./globals.css";
+// import '../styles/globals.css';
 import Authprovider from "@/components/AuthProvider";
 import React, { useState } from "react";
 import Theme from "./Theme";

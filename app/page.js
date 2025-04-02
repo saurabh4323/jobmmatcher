@@ -1,6 +1,7 @@
 import JobPlatform from "@/components/Home";
 import React from "react";
 import Head from "next/head";
+import "./globals.css";
 import Hero from "@/components/Hero";
 export default function page() {
   <Head>
