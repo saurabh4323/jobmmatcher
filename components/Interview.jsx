@@ -11,66 +11,82 @@ export default function Interview() {
     {
       topic: "Arrays and Strings",
       link: "https://youtu.be/B2KusJcbVIg?si=AEpzL1_-dOKE_eVC",
+      doscs: "https://www.geeksforgeeks.org/array-data-structure/",
     },
     {
       topic: "Linked Lists",
       link: "https://youtu.be/Hj_rA0dhr2I?si=GK0_fS3OGpYtWzp5",
+      docs: "",
     },
     {
       topic: "Stacks and Queues",
       link: "https://youtu.be/wjI1WNcIntg?si=4peeD52-aU__2e-6",
+      docs: "",
     },
     {
       topic: "Bit Manipulation",
       link: "https://youtu.be/NLKQEOgBAnw?si=7KYZ_2h2FPuCBLcw",
+      docs: "",
     },
     {
       topic: "Heap and Priority Queue",
       link: "https://youtu.be/HqPJF2L5h9U?si=EcnK_PHCzjWzpQKO",
+      docs: "",
     },
     {
       topic: "Segment Trees",
       link: "https://youtu.be/ZBHKZF5w4YU?si=5m6THsH7x9BQpwbD",
+      docs: "",
     },
     {
       topic: "JavaScript",
       link: "https://youtu.be/jS4aFq5-91M?si=AKeBgEZJE3y_FnTU",
+      docs: "",
     },
     {
       topic: "TypeScript",
       link: "https://youtu.be/BCg4U1FzODs?si=AE3EZhCfRa2yLIg2",
+      docs: "",
     },
     {
       topic: "Python",
       link: "https://youtu.be/rfscVS0vtbw?si=pSFkYkd_MxPSNZ4Z",
+      docs: "",
     },
     {
       topic: "C++",
       link: "https://youtu.be/vLnPwxZdW4Y?si=TxhZAg-KJpR0Gyw7",
+      docs: "",
     },
     {
       topic: "Java",
       link: "https://youtu.be/eIrMbAQSU34?si=uvV_F7VYLsDXKPGn",
+      docs: "",
     },
     {
       topic: "Go",
       link: "https://youtu.be/YS4e4q9oBaU?si=q1GBZrw4y9Z1RGO2",
+      docs: "",
     },
     {
       topic: "Rust",
       link: "https://youtu.be/5C_HPTJg5ek?si=wt9jN2_rMlpDWz9S",
+      docs: "",
     },
     {
       topic: "PHP",
       link: "https://youtu.be/OK_JCtrrv-c?si=QYUT_4zTEA29Zm3E",
+      docs: "",
     },
     {
       topic: "Ruby",
       link: "https://youtu.be/t_ispmWmdjY?si=w7wuJ7FpTULi9U0p",
+      docs: "",
     },
     {
       topic: "C#",
       link: "https://youtu.be/GhQdlIFylQ8?si=5PpZV4zWg4OICEoP",
+      docs: "",
     },
   ];
   return (
