@@ -28,8 +28,8 @@ export default function Navbar() {
   }, [status]);
 
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
+    <nav className="navbar" style={{ width: "100%", padding: "10px" }}>
+      <div className="navbar-container" style={{ width: "40%" }}>
         <div className="navbar-logo">
           <Link href="/">
             <div className="logo-container">
@@ -59,14 +59,15 @@ export default function Navbar() {
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/jobs">Jobs</Link>
           <Link href="/resume">Resume</Link>
-          {/* <Link href="/index">index</Link> */}
+          <Link href="/index">Analyze</Link>
+          <Link href="/interview">Practice</Link>
         </div>
 
         <div className="navbar-buttons">
           {status == "authenticated" ? (
             <img
               onClick={() => {
-                router.push("/profile");
+                router.push("/login");
               }}
               src={session.user.image}
               style={{ width: "40px", borderRadius: "20px", cursor: "pointer" }}

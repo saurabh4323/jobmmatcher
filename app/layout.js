@@ -8,6 +8,7 @@ import Theme from "./Theme";
 import Head from "next/head";
 import Navbar from "@/components/Navbar";
 import CircularLoopBackground from "./Circ";
+import Footer from "@/components/Footer";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
           <Navbar />
 
           <main>{children}</main>
+          <Footer></Footer>
         </Authprovider>
       </body>
     </html>

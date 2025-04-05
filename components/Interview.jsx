@@ -1,26 +1,77 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function Interview() {
   const [selectedTopic, setSelectedTopic] = useState(0);
+  const [show, setshow] = useState(false);
+  const router = useRouter();
 
   const topics = [
-    "Arrays and Strings",
-    "Linked Lists",
-    "Stacks and Queues",
-    "Bit Manipulation",
-    "Heap and Priority Queue",
-    "Segment Trees",
-    "JavaScript",
-    "TypeScript",
-    "Python",
-    "C++",
-    "Java",
-    "Go",
-    "Rust",
-    "PHP",
-    "Ruby",
-    "C#",
+    {
+      topic: "Arrays and Strings",
+      link: "https://youtu.be/B2KusJcbVIg?si=AEpzL1_-dOKE_eVC",
+    },
+    {
+      topic: "Linked Lists",
+      link: "https://youtu.be/Hj_rA0dhr2I?si=GK0_fS3OGpYtWzp5",
+    },
+    {
+      topic: "Stacks and Queues",
+      link: "https://youtu.be/wjI1WNcIntg?si=4peeD52-aU__2e-6",
+    },
+    {
+      topic: "Bit Manipulation",
+      link: "https://youtu.be/NLKQEOgBAnw?si=7KYZ_2h2FPuCBLcw",
+    },
+    {
+      topic: "Heap and Priority Queue",
+      link: "https://youtu.be/HqPJF2L5h9U?si=EcnK_PHCzjWzpQKO",
+    },
+    {
+      topic: "Segment Trees",
+      link: "https://youtu.be/ZBHKZF5w4YU?si=5m6THsH7x9BQpwbD",
+    },
+    {
+      topic: "JavaScript",
+      link: "https://youtu.be/jS4aFq5-91M?si=AKeBgEZJE3y_FnTU",
+    },
+    {
+      topic: "TypeScript",
+      link: "https://youtu.be/BCg4U1FzODs?si=AE3EZhCfRa2yLIg2",
+    },
+    {
+      topic: "Python",
+      link: "https://youtu.be/rfscVS0vtbw?si=pSFkYkd_MxPSNZ4Z",
+    },
+    {
+      topic: "C++",
+      link: "https://youtu.be/vLnPwxZdW4Y?si=TxhZAg-KJpR0Gyw7",
+    },
+    {
+      topic: "Java",
+      link: "https://youtu.be/eIrMbAQSU34?si=uvV_F7VYLsDXKPGn",
+    },
+    {
+      topic: "Go",
+      link: "https://youtu.be/YS4e4q9oBaU?si=q1GBZrw4y9Z1RGO2",
+    },
+    {
+      topic: "Rust",
+      link: "https://youtu.be/5C_HPTJg5ek?si=wt9jN2_rMlpDWz9S",
+    },
+    {
+      topic: "PHP",
+      link: "https://youtu.be/OK_JCtrrv-c?si=QYUT_4zTEA29Zm3E",
+    },
+    {
+      topic: "Ruby",
+      link: "https://youtu.be/t_ispmWmdjY?si=w7wuJ7FpTULi9U0p",
+    },
+    {
+      topic: "C#",
+      link: "https://youtu.be/GhQdlIFylQ8?si=5PpZV4zWg4OICEoP",
+    },
   ];
   return (
     <div className="min">
@@ -56,7 +107,7 @@ export default function Interview() {
 
           {/* Topic Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {topics.map((topic, index) => (
+            {topics.map((topicItem, index) => (
               <div
                 key={index}
                 onClick={() => setSelectedTopic(index)}
@@ -92,7 +143,7 @@ export default function Interview() {
                   {/* Content */}
                   <div className="relative z-20 p-5">
                     <div className="h-14 flex items-center justify-between">
-                      <span className="font-medium">{topic}</span>
+                      <span className="font-medium">{topicItem.topic}</span>
 
                       {/* Icon that appears on hover/selection */}
                       <span
@@ -131,7 +182,7 @@ export default function Interview() {
                 <div className="flex items-center space-x-2 mb-8">
                   <div className="h-10 w-1 bg-blue-500 rounded-full"></div>
                   <h2 className="text-2xl font-bold">
-                    {topics[selectedTopic]}
+                    {topics[selectedTopic].topic}
                   </h2>
                 </div>
 
@@ -139,7 +190,12 @@ export default function Interview() {
                   <div>
                     <h3 className="text-lg font-medium mb-4">Start Learning</h3>
                     <div className="space-y-3">
-                      <button className="w-full flex items-center justify-between bg-gray-800 hover:bg-gray-700 rounded-lg p-4 transition-colors group">
+                      <button
+                        className="w-full flex items-center justify-between bg-gray-800 hover:bg-gray-700 rounded-lg p-4 transition-colors group"
+                        onClick={() => {
+                          setshow(true);
+                        }}
+                      >
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-lg bg-blue-500/20 flex items-center justify-center mr-3">
                             <svg
@@ -155,14 +211,7 @@ export default function Interview() {
                               />
                             </svg>
                           </div>
-                          <span
-                            className="font-medium"
-                            onClick={() => {
-                              window.location.href = `https://www.youtube.com/results?search_query=${topics[selectedTopic]}`;
-                            }}
-                          >
-                            Video Tutorials
-                          </span>
+                          <span className="font-medium">Video Tutorials</span>
                         </div>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -208,10 +257,14 @@ export default function Interview() {
                     </div>
                   </div>
 
-                  <div>
+                  <div
+                    onClick={() => {
+                      window.location.href = `/index/${topics[selectedTopic].topic}`;
+                    }}
+                  >
                     <h3 className="text-lg font-medium mb-4">Practice</h3>
                     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                      <div className="text-center">
+                      <div className="text-center" onClick={() => {}}>
                         <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-blue-500/20 mb-4">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -252,6 +305,55 @@ export default function Interview() {
           )}
         </div>
       </div>
+      {/* iframe using  */}
+      {show ? (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="relative bg-gray-900 rounded-xl p-4 border border-gray-700 shadow-lg max-w-2xl w-full">
+            {/* Close button */}
+            <button
+              onClick={() => setshow(false)}
+              className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
+            {/* Video container */}
+            <div className="relative aspect-video w-full">
+              <iframe
+                width="100%"
+                height="100%"
+                src={
+                  topics[selectedTopic].link
+                    .replace("youtu.be/", "youtube.com/embed/")
+                    .replace("?si=", "?") + "&autoplay=1&mute=1"
+                }
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="rounded-lg"
+              />
+            </div>
+
+            {/* Open in YouTube button */}
+          </div>
+        </div>
+      ) : (
+        <div className="nn"></div>
+      )}
     </div>
   );
 }
