@@ -659,7 +659,7 @@ export default function ProfilePage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {userData.applications.map((app, index) => (
+                    {userData.applications.slice(0, 1).map((app, index) => (
                       <tr key={index} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">

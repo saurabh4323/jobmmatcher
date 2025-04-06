@@ -4,6 +4,7 @@ const JobSchema = new mongoose.Schema({
   title: {
     type: String,
   },
+
   name: {
     type: String,
   },
@@ -14,7 +15,7 @@ const JobSchema = new mongoose.Schema({
     type: String,
   },
   skills: {
-    type: String,
+    type: [String],
   },
   experience: {
     type: String,

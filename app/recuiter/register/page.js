@@ -49,7 +49,7 @@ const AuthPage = () => {
 
       localStorage.setItem("recid", "aiq");
       localStorage.setItem("recemail", e.target.email.value);
-      window.location.href = "/recuiter/home";
+      window.location.href = "/home";
     } catch (error) {
       console.error("Auth error:", error.response?.data || error.message);
       alert(error.response?.data?.error || "Something went wrong");

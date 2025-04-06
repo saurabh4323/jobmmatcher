@@ -65,3 +65,16 @@ export async function POST(req) {
     );
   }
 }
+export async function GET(req) {
+  try {
+    await connectDB();
+    const jobs = await job.find({}).sort({ createdAt: -1 });
+    return NextResponse.json(jobs, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

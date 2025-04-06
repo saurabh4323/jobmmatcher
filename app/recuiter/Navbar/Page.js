@@ -27,7 +27,7 @@ export default function Navbarrec() {
           {/* Logo and Brand */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <Link href="/recuiter/dashboard">
+              <Link href="/home">
                 <div className="flex items-center">
                   <div className="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-600/30">
                     <Briefcase className="h-6 w-6 text-white" />
@@ -64,7 +64,7 @@ export default function Navbarrec() {
                 </div>
               </Link>
 
-              <Link href="/interviewsrecuiter">
+              <Link href="/interviewlive">
                 <div className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-slate-800 hover:text-white flex items-center">
                   <Calendar className="mr-2 h-4 w-4" />
                   Interviews
@@ -173,13 +173,13 @@ export default function Navbarrec() {
               {isProfileOpen && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-slate-800 ring-1 ring-black ring-opacity-5">
                   <a
-                    href="/recruiter/profile"
+                    href=""
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white"
                   >
                     Your Profile
                   </a>
                   <a
-                    href="/recruiter/settings"
+                    href=""
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white"
                   >
                     <div className="flex items-center">

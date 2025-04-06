@@ -34,7 +34,7 @@ const JobPlatform = () => {
   const [data, setdata] = useState([]);
   const api_endpoint = "https://nubela.co/proxycurl/api/v2/linkedin";
   const linkedin_profile_url = linkedinUrl;
-  const api_key = "OZ49GF4S4U4pCbB_1Cp0uQ";
+  const api_key = "kl_ojowsbUDnKlGYvV6AyQ";
   // components/LinkedIn.jsx
   const router = useRouter();
   const handleSubmit = async (e) => {

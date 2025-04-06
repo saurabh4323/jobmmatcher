@@ -33,7 +33,7 @@ export default function RecruiterDashboard() {
         const response = await axios.get(`/api/rec/job/${data[0].fullName}`);
         setLength(response.data.data.length);
         console.log(response.data.data.length);
-        alert(response.data.data.length);
+        // alert(response.data.data.length);
       } catch (err) {
         console.error("Error fetching length:", err);
       }

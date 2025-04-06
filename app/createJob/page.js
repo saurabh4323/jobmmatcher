@@ -48,7 +48,7 @@ export default function CreateJobPage() {
       const response = await axios.post("/api/rec/job", jobData);
       console.log(response.data);
 
-      router.push("/jobs");
+      router.push("/jobsrec");
       router.refresh();
     } catch (err) {
       console.error("Submit error:", err);

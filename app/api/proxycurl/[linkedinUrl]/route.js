@@ -29,8 +29,8 @@ export async function GET(req, { params }) {
   }
 
   try {
-    // const api_endpoint = "https://nubela.co/proxycurl/api/v2/linkedin";
-    // const api_key = "y9jD8371rfNTvGs8zogF8w";
+    const api_endpoint = "https://nubela.co/proxycurl/api/v2/linkedin";
+    const api_key = "kl_ojowsbUDnKlGYvV6AyQ";
 
     // Validate API key
     if (!api_key) {
