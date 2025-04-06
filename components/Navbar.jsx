@@ -2,12 +2,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import "./nav.css";
-// import useRouter from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-// import { useRouter } from "next/router";
+
 export default function Navbar() {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -27,11 +25,14 @@ export default function Navbar() {
     }
   }, [status]);
 
+  const userImage = session?.user?.image || "https://robohash.org/123";
+
   return (
     <nav className="navbar" style={{ width: "100%", padding: "10px" }}>
       <div className="navbar-container" style={{ width: "40%" }}>
+        {/* Logo */}
         <div className="navbar-logo">
-          <Link href="/">
+          <Link href="/student/home">
             <div className="logo-container">
               <div className="logo-icon">
                 <svg
@@ -55,30 +56,37 @@ export default function Navbar() {
           </Link>
         </div>
 
+        {/* Nav Links */}
         <div className={`navbar-links ${menuOpen ? "active" : ""}`}>
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/jobs">Jobs</Link>
           <Link href="/resume">Resume</Link>
-          <Link href="/index">Analyze</Link>
           <Link href="/interview">Practice</Link>
+          <Link href="/profile">Profile</Link>
         </div>
 
+        {/* Buttons/User */}
         <div className="navbar-buttons">
-          {status == "authenticated" ? (
+          {status === "authenticated" || show ? (
             <img
-              onClick={() => {
-                router.push("/login");
+              onClick={() => router.push("/login")}
+              src={userImage}
+              alt="User Avatar"
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "20px",
+                cursor: "pointer",
               }}
-              src={session.user.image}
-              style={{ width: "40px", borderRadius: "20px", cursor: "pointer" }}
-            ></img>
+            />
           ) : (
-            <Link href="/register" className="btn btn-primary">
+            <Link href="/choose" className="btn btn-primary">
               Get started for free
             </Link>
           )}
         </div>
 
+        {/* Mobile Menu Toggle */}
         <div
           className="navbar-mobile-toggle"
           onClick={() => setMenuOpen(!menuOpen)}

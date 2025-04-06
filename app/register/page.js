@@ -46,7 +46,7 @@ const AuthPage = () => {
 
       // Store token or handle response
       localStorage.setItem("tokenid", "aiq");
-      window.location.href = "/";
+      window.location.href = "/student/home";
     } catch (error) {
       console.error("Auth error:", error.response?.data || error.message);
       alert(error.response?.data?.error || "Something went wrong");
@@ -160,8 +160,8 @@ const AuthPage = () => {
               {loading
                 ? "Loading..."
                 : activeTab === "login"
-                ? "Login"
-                : "Sign Up"}
+                  ? "Login"
+                  : "Sign Up"}
             </button>
           </form>
         </div>

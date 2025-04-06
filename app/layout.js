@@ -1,22 +1,29 @@
 "use client";
-import { Geist_Mono } from "next/font/google"; // Remove invalid Geist import
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
-// import '../styles/globals.css';
+// import "../styles/globals.css";
 import Authprovider from "@/components/AuthProvider";
-import React, { useState } from "react";
-import Theme from "./Theme";
+import React, { useEffect, useState } from "react";
+// import Theme from "./Theme";
 import Head from "next/head";
 import Navbar from "@/components/Navbar";
-import CircularLoopBackground from "./Circ";
+// import CircularLoopBackground from "./Circ";
 import Footer from "@/components/Footer";
-
+import Navbarrec from "./recuiter/Navbar/Page";
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
 export default function RootLayout({ children }) {
+  const [show, setshow] = useState(false);
   const [theme, setTheme] = useState("light");
+  useEffect(() => {
+    const login = localStorage.getItem("recid");
+    if (login) {
+      setshow(true);
+    }
+  }, []);
 
   return (
     <html data-theme={theme} lang="en">
@@ -30,7 +37,7 @@ export default function RootLayout({ children }) {
       </Head>
       <body className={`${geistMono.variable} antialiased`}>
         <Authprovider>
-          <Navbar />
+          {show ? <Navbarrec></Navbarrec> : <Navbar></Navbar>}
 
           <main>{children}</main>
           <Footer></Footer>

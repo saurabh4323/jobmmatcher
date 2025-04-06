@@ -3,6 +3,7 @@ import React from "react";
 import Head from "next/head";
 import "./globals.css";
 import Hero from "@/components/Hero";
+import UserSelectionPage from "@/components/Choose";
 export default function page() {
   <Head>
     <title>JOb Matcher</title>
@@ -12,7 +13,8 @@ export default function page() {
   return (
     <div>
       {/* <JobPlatform></JobPlatform> */}
-      <Hero></Hero>
+      {/* <Hero></Hero> */}
+      <UserSelectionPage></UserSelectionPage>
     </div>
   );
 }

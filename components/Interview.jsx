@@ -16,77 +16,77 @@ export default function Interview() {
     {
       topic: "Linked Lists",
       link: "https://youtu.be/Hj_rA0dhr2I?si=GK0_fS3OGpYtWzp5",
-      docs: "",
+      docs: "https://www.w3schools.com/dsa/dsa_theory_linkedlists.php",
     },
     {
       topic: "Stacks and Queues",
       link: "https://youtu.be/wjI1WNcIntg?si=4peeD52-aU__2e-6",
-      docs: "",
+      docs: "https://www.w3schools.com/dsa/dsa_data_stacks.php",
     },
     {
       topic: "Bit Manipulation",
       link: "https://youtu.be/NLKQEOgBAnw?si=7KYZ_2h2FPuCBLcw",
-      docs: "",
+      docs: "https://www.geeksforgeeks.org/bits-manipulation-important-tactics/",
     },
     {
       topic: "Heap and Priority Queue",
       link: "https://youtu.be/HqPJF2L5h9U?si=EcnK_PHCzjWzpQKO",
-      docs: "",
+      docs: "https://www.geeksforgeeks.org/heap-data-structure/                    heap",
     },
     {
       topic: "Segment Trees",
       link: "https://youtu.be/ZBHKZF5w4YU?si=5m6THsH7x9BQpwbD",
-      docs: "",
+      docs: "https://www.geeksforgeeks.org/segment-tree-data-structure/",
     },
     {
       topic: "JavaScript",
       link: "https://youtu.be/jS4aFq5-91M?si=AKeBgEZJE3y_FnTU",
-      docs: "",
+      docs: "https://www.w3schools.com/js/default.asp",
     },
     {
       topic: "TypeScript",
       link: "https://youtu.be/BCg4U1FzODs?si=AE3EZhCfRa2yLIg2",
-      docs: "",
+      docs: "https://www.geeksforgeeks.org/typescript/",
     },
     {
       topic: "Python",
       link: "https://youtu.be/rfscVS0vtbw?si=pSFkYkd_MxPSNZ4Z",
-      docs: "",
+      docs: "https://www.w3schools.com/python/default.asp",
     },
     {
       topic: "C++",
       link: "https://youtu.be/vLnPwxZdW4Y?si=TxhZAg-KJpR0Gyw7",
-      docs: "",
+      docs: "https://www.w3schools.com/cpp/default.asp",
     },
     {
       topic: "Java",
       link: "https://youtu.be/eIrMbAQSU34?si=uvV_F7VYLsDXKPGn",
-      docs: "",
+      docs: "https://www.w3schools.com/java/default.asp",
     },
     {
       topic: "Go",
       link: "https://youtu.be/YS4e4q9oBaU?si=q1GBZrw4y9Z1RGO2",
-      docs: "",
+      docs: "https://www.geeksforgeeks.org/go/",
     },
     {
       topic: "Rust",
       link: "https://youtu.be/5C_HPTJg5ek?si=wt9jN2_rMlpDWz9S",
-      docs: "",
+      docs: "https://www.geeksforgeeks.org/rust-a-case-of-safe-concurrency/",
     },
     {
       topic: "PHP",
       link: "https://youtu.be/OK_JCtrrv-c?si=QYUT_4zTEA29Zm3E",
-      docs: "",
+      docs: "https://www.w3schools.com/php/",
     },
     {
-      topic: "Ruby",
+      topic: "React",
       link: "https://youtu.be/t_ispmWmdjY?si=w7wuJ7FpTULi9U0p",
-      docs: "",
+      docs: "https://www.w3schools.com/react/default.asp",
     },
     {
       topic: "C#",
       link: "https://youtu.be/GhQdlIFylQ8?si=5PpZV4zWg4OICEoP",
-      docs: "",
+      docs: "https://www.w3schools.com/C/#/default.asp",
     },
   ];
   return (
@@ -243,7 +243,14 @@ export default function Interview() {
                         </svg>
                       </button>
 
-                      <button className="w-full flex items-center justify-between bg-gray-800 hover:bg-gray-700 rounded-lg p-4 transition-colors group">
+                      <button
+                        className="w-full flex items-center justify-between bg-gray-800 hover:bg-gray-700 rounded-lg p-4 transition-colors group"
+                        onClick={() => {
+                          window.open(
+                            (window.location.href = `${topics[selectedTopic].docs}`)
+                          );
+                        }}
+                      >
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-lg bg-indigo-500/20 flex items-center justify-center mr-3">
                             <svg

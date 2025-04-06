@@ -1,10 +1,12 @@
 import puppeteer from "puppeteer";
 
 export async function GET(req) {
+  // Check if LinkedIn credentials are provided
+
   try {
     console.log("Scraping started...");
     const browser = await puppeteer.launch({
-      headless: true, // Set to false for debugging
+      headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
@@ -15,7 +17,6 @@ export async function GET(req) {
       timeout: 120000,
     });
 
-    // Wait for the login form to be visible, not for navigation
     await page.waitForSelector("#username", { timeout: 60000 });
 
     console.log("Filling login details...");
@@ -24,7 +25,7 @@ export async function GET(req) {
     await page.click('[type="submit"]');
 
     console.log("Waiting for job search page...");
-    // Instead of waitForNavigation, we wait for the job search page to load by waiting for a specific selector
+
     await page.waitForSelector(".jobs-search-results__list-item", {
       timeout: 120000,
     });

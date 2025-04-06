@@ -1,12 +1,60 @@
 // pages/profile.js
-"use client"; // pages/profile.js
+"use client";
 import { useState, useEffect } from "react";
 import Head from "next/head";
-
+import EditProfileModal from "@/components/EdirProfileModal";
+import { Cross } from "lucide-react";
+import axios from "axios";
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showNotification, setShowNotification] = useState(false);
   const [animateScore, setAnimateScore] = useState(false);
+  const [profileData, setProfileData] = useState({});
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [prdata, setprdata] = useState([]);
+
+  useEffect(() => {
+    fetchProfileData();
+    const phone = localStorage.getItem("jobid");
+
+    const response = axios.get(`/api/profile/${phone}`).then((res) => {
+      setprdata(res.data.data);
+      console.log(res.data.data);
+    });
+  }, []);
+  console.log("dekh", prdata);
+
+  const fetchProfileData = async () => {
+    try {
+      // Try to get from local storage first
+      let retrievedData;
+      if (typeof window !== "undefined") {
+        retrievedData = localStorage.getItem("profiledata");
+      }
+
+      if (retrievedData) {
+        setProfileData(JSON.parse(retrievedData));
+      } else {
+        // If not in local storage, fetch from API
+        const response = await fetch("/api/profile");
+        if (response.ok) {
+          const data = await response.json();
+          setProfileData(data);
+
+          // Save to local storage
+          if (typeof window !== "undefined") {
+            localStorage.setItem("profiledata", JSON.stringify(data));
+          }
+        } else {
+          // If API fails, set default data
+          setProfileData(null);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+      setProfileData(null);
+    }
+  };
 
   // Animation effects
   useEffect(() => {
@@ -19,19 +67,32 @@ export default function ProfilePage() {
     }, 800);
   }, []);
 
-  // Mock user data
+  // Handle profile update
+  const handleProfileUpdate = (updatedData) => {
+    const newProfileData = { ...profileData, ...updatedData };
+    setProfileData(newProfileData);
+
+    // Update local storage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("profiledata", JSON.stringify(newProfileData));
+    }
+  };
+
+  // Mock user data - fallback if no profile data is available
   const userData = {
-    name: "Alex Johnson",
-    email: "alex.johnson@example.com",
-    phone: "+1 (555) 123-4567",
-    gender: "Non-binary",
-    headline: "Senior Full Stack Developer",
+    name: prdata?.[0]?.full_name || "NO NAME",
+    email: prdata?.[0]?.email || "saurabhiitr01@gmail.com",
+    phone: prdata?.[0]?.phone || "+91 8810873052",
+    gender: "male",
+    headline: prdata?.[0]?.headline || "Senior Full Stack Developer",
     summary:
       "Passionate developer with 5+ years of experience in React, Node.js, and cloud technologies. Looking for remote opportunities in fintech or healthcare.",
-    linkedIn: "linkedin.com/in/alexjohnson",
-    github: "github.com/alexjohnsondev",
-    photo:
-      "ht/photo/20241018/young-sexy-girl-in-lingerie-on-the-bed_10973720.jpg!bw700",
+    linkedIn: prdata?.[0]?.linkedIn || "linkedin.com/in/saurabh2708",
+    github: prdata?.[0]?.github || "github.com/saurabh4323",
+    photo: "https://robohash.org/123",
+    openToWork:
+      profileData?.openToWork !== undefined ? profileData.openToWork : true,
+    preferredWork: profileData?.preferredWork || "Remote",
     atsScore: 87,
     resumeStrength: 82,
     profileViews: 342,
@@ -78,103 +139,6 @@ export default function ProfilePage() {
         matchScore: 97,
       },
     ],
-    skills: [
-      { name: "React", level: 95, endorsements: 42 },
-      { name: "Node.js", level: 88, endorsements: 36 },
-      { name: "TypeScript", level: 90, endorsements: 29 },
-      { name: "AWS", level: 82, endorsements: 23 },
-      { name: "MongoDB", level: 79, endorsements: 18 },
-      { name: "Docker", level: 85, endorsements: 21 },
-    ],
-    achievements: [
-      {
-        icon: "🏆",
-        title: "Top 5% Profile",
-        description: "Your profile outperforms 95% of job seekers",
-      },
-      {
-        icon: "⚡",
-        title: "Fast Responder",
-        description: "You respond to recruiters within 2 hours",
-      },
-      {
-        icon: "🎯",
-        title: "Perfect Match",
-        description: "5 jobs matching your skills are available",
-      },
-    ],
-    certifications: [
-      {
-        name: "AWS Certified Developer",
-        date: "2024",
-        issuer: "Amazon Web Services",
-        logo: "/api/placeholder/30/30",
-      },
-      {
-        name: "MongoDB Professional",
-        date: "2023",
-        issuer: "MongoDB University",
-        logo: "/api/placeholder/30/30",
-      },
-    ],
-    salary: { min: 120000, max: 150000, currency: "USD" },
-    interviews: [
-      {
-        company: "TechCorp",
-        position: "Senior Developer",
-        date: "2025-04-10",
-        status: "Scheduled",
-        type: "Technical",
-        duration: 60,
-      },
-      {
-        company: "CloudNine",
-        position: "Lead Developer",
-        date: "2025-04-15",
-        status: "Preparation",
-        type: "Behavioral",
-        duration: 45,
-      },
-    ],
-    jobRecommendations: [
-      {
-        title: "Lead Developer",
-        company: "Innovation Tech",
-        location: "Remote",
-        matchScore: 94,
-        salary: "$140K-$160K",
-        postedDays: 2,
-        logo: "/api/placeholder/40/40",
-      },
-      {
-        title: "Senior Frontend Engineer",
-        company: "WebPros",
-        location: "San Francisco (Hybrid)",
-        matchScore: 91,
-        salary: "$130K-$150K",
-        postedDays: 1,
-        logo: "/api/placeholder/40/40",
-      },
-      {
-        title: "Full Stack Lead",
-        company: "DataFlow",
-        location: "Remote",
-        matchScore: 89,
-        salary: "$125K-$145K",
-        postedDays: 3,
-        logo: "/api/placeholder/40/40",
-      },
-    ],
-    analytics: {
-      profileGrowth: [28, 32, 45, 52, 61, 85],
-      applicationResults: {
-        offers: 15,
-        interviews: 25,
-        rejected: 20,
-        pending: 40,
-      },
-      skillsGap: { frontEnd: 5, backEnd: 10, cloud: 15, ai: 25, security: 20 },
-    },
   };
 
   const getStatusColor = (status) => {
@@ -245,7 +209,10 @@ export default function ProfilePage() {
                   </svg>
                   Preview
                 </button>
-                <button className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md flex items-center text-sm transition-colors shadow-md">
+                <button
+                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md flex items-center text-sm transition-colors shadow-md"
+                  onClick={() => setIsEditModalOpen(true)}
+                >
                   <svg
                     className="w-4 h-4 mr-1"
                     fill="none"
@@ -264,6 +231,17 @@ export default function ProfilePage() {
                 </button>
               </div>
             </div>
+            {isEditModalOpen && (
+              <div className=" absolute inset-0 z-50 flex items-center justify-center  bg-opacity-50">
+                <Cross
+                  color="red"
+                  onClick={() => {
+                    setIsEditModalOpen(false);
+                  }}
+                ></Cross>
+                <EditProfileModal />
+              </div>
+            )}
 
             {/* Navigation Tabs */}
             <div className="flex mt-4 border-b border-gray-200">
@@ -359,11 +337,13 @@ export default function ProfilePage() {
                     </h2>
                     <p className="text-indigo-100">{userData.headline}</p>
                     <div className="flex justify-center mt-2 space-x-2">
+                      {userData.openToWork && (
+                        <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">
+                          Open to Work
+                        </span>
+                      )}
                       <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">
-                        Open to Work
-                      </span>
-                      <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full">
-                        Remote Preferred
+                        {userData.preferredWork} Preferred
                       </span>
                     </div>
                   </div>
@@ -515,73 +495,116 @@ export default function ProfilePage() {
 
                 {/* Resume Performance Card */}
                 <div className="bg-white shadow-lg rounded-xl p-6 mb-6 border border-indigo-50">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium text-gray-900">
-                      Resume Performance
-                    </h3>
-                    <button className="text-sm text-indigo-600 flex items-center hover:text-indigo-800">
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                        />
-                      </svg>
-                      Upload New
-                    </button>
-                  </div>
-
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                    Resume Performance
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <div className="mb-6">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700">
-                            ATS Compatibility Score
-                          </span>
-                          <span className="text-sm font-medium text-green-600">
-                            {userData.atsScore}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                          <div
-                            className={`bg-green-600 h-2.5 rounded-full transition-all duration-1000 ease-out ${animateScore ? "w-5/6" : "w-0"}`}
-                            style={{ width: `${userData.atsScore}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-500 mt-1">
-                          <span>Poor</span>
-                          <span>Excellent</span>
-                        </div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-gray-600">ATS Score</span>
+                        <span className="text-sm font-medium text-indigo-600">
+                          {userData.atsScore}/100
+                        </span>
                       </div>
-
-                      <div className="mb-6">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700">
-                            Resume Strength
-                          </span>
-                          <span className="text-sm font-medium text-blue-600">
-                            {userData.resumeStrength}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                          <div
-                            className={`bg-blue-600 h-2.5 rounded-full transition-all duration-1000 ease-out ${animateScore ? "w-4/5" : "w-0"}`}
-                            style={{ width: `${userData.resumeStrength}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-500 mt-1">
-                          <span>Weak</span>
-                          <span>Strong</span>
-                        </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div
+                          className={`bg-indigo-600 h-2.5 rounded-full transition-all duration-1000 ease-out ${
+                            animateScore ? "" : "w-0"
+                          }`}
+                          style={{
+                            width: animateScore
+                              ? `${userData.atsScore}%`
+                              : "0%",
+                          }}
+                        ></div>
                       </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Your resume is well-optimized for applicant tracking
+                        systems
+                      </p>
                     </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-gray-600">
+                          Overall Strength
+                        </span>
+                        <span className="text-sm font-medium text-indigo-600">
+                          {userData.resumeStrength}/100
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div
+                          className={`bg-indigo-600 h-2.5 rounded-full transition-all duration-1000 ease-out ${
+                            animateScore ? "" : "w-0"
+                          }`}
+                          style={{
+                            width: animateScore
+                              ? `${userData.resumeStrength}%`
+                              : "0%",
+                          }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Good balance of skills, experience, and achievements
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Summary Section */}
+                <div className="bg-white shadow-lg rounded-xl p-6 mb-6 border border-indigo-50">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                    Professional Summary
+                  </h2>
+                  <p className="text-gray-700">{userData.summary}</p>
+                </div>
+
+                {/* Recent Applications */}
+                <div className="bg-white shadow-lg rounded-xl p-6 border border-indigo-50">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Recent Applications
+                    </h2>
+                    <button
+                      onClick={() => setActiveTab("applications")}
+                      className="text-sm text-indigo-600 hover:text-indigo-800"
+                    >
+                      View all
+                    </button>
+                  </div>
+                  <div className="space-y-4">
+                    {userData.applications.slice(0, 2).map((app, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center p-3 hover:bg-indigo-50 rounded-lg transition-colors"
+                      >
+                        <div className="flex-shrink-0">
+                          <img
+                            src={app.logo}
+                            alt={app.company}
+                            className="w-10 h-10 rounded"
+                          />
+                        </div>
+                        <div className="ml-4 flex-grow">
+                          <h3 className="text-sm font-medium text-gray-900">
+                            {app.position}
+                          </h3>
+                          <p className="text-xs text-gray-500">{app.company}</p>
+                        </div>
+                        <div className="ml-2 text-right">
+                          <span
+                            className={`inline-flex text-xs px-2 py-0.5 rounded-full ${getStatusColor(
+                              app.status
+                            )}`}
+                          >
+                            {app.status}
+                          </span>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {app.date}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -590,103 +613,104 @@ export default function ProfilePage() {
 
           {activeTab === "applications" && (
             <div className="bg-white shadow-lg rounded-xl p-6 border border-indigo-50">
-              <h3 className="text-lg font-medium text-gray-900 mb-6">
-                Your Applications
-              </h3>
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                All Applications
+              </h2>
               <div className="overflow-x-auto">
-                <table className="min-w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-4">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Company
                       </th>
-                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-4">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Position
                       </th>
-                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-4">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Salary
                       </th>
-                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-4">
-                        Match
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Match Score
                       </th>
-                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-4">
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
                         Status
                       </th>
-                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-4">
-                        Applied
-                      </th>
-                      <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-4">
-                        Actions
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Date Applied
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {userData.applications.map((application, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="py-3 px-4">
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {userData.applications.map((app, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <img
-                              src={application.logo}
-                              alt={application.company}
-                              className="w-8 h-8 mr-3 rounded-full"
-                            />
-                            <span className="font-medium text-gray-900">
-                              {application.company}
-                            </span>
+                            <div className="flex-shrink-0 h-10 w-10">
+                              <img
+                                className="h-10 w-10 rounded-full"
+                                src={app.logo}
+                                alt={app.company}
+                              />
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {app.company}
+                              </div>
+                            </div>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-sm text-gray-900">
-                          {application.position}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {app.position}
+                          </div>
                         </td>
-                        <td className="py-3 px-4 text-sm text-gray-900">
-                          {application.salary}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {app.salary}
+                          </div>
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                            <span className="text-sm text-gray-900 mr-2">
+                              {app.matchScore}%
+                            </span>
+                            <div className="w-16 bg-gray-200 rounded-full h-1.5">
                               <div
-                                className="bg-green-500 h-2 rounded-full"
-                                style={{ width: `${application.matchScore}%` }}
+                                className="bg-indigo-600 h-1.5 rounded-full"
+                                style={{ width: `${app.matchScore}%` }}
                               ></div>
                             </div>
-                            <span className="text-sm text-gray-700">
-                              {application.matchScore}%
-                            </span>
                           </div>
                         </td>
-                        <td className="py-3 px-4">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`px-2 py-1 text-xs rounded-full ${getStatusColor(application.status)}`}
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                              app.status
+                            )}`}
                           >
-                            {application.status}
+                            {app.status}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-sm text-gray-500">
-                          {application.date}
-                        </td>
-                        <td className="py-3 px-4">
-                          <button className="text-indigo-600 hover:text-indigo-900">
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                              />
-                            </svg>
-                          </button>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {app.date}
                         </td>
                       </tr>
                     ))}

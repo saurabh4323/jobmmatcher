@@ -38,11 +38,17 @@ const Login = () => {
           </div>
           <div className="flex flex-col items-center gap-6">
             {session.user.image && (
-              <img
-                src={session.user.image}
-                alt="Profile"
-                className="h-24 w-24 rounded-full border-4 border-white shadow-lg"
-              />
+              <div className="relative h-24 w-24">
+                <img
+                  src={session.user.image}
+                  alt="Profile"
+                  className="h-24 w-24 rounded-full border-4 border-white shadow-lg"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/default-avatar.png"; // Fallback image
+                  }}
+                />
+              </div>
             )}
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
