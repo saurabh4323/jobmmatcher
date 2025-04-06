@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import PersonaSelection from "./PersonaSelection";
-import PdfTextExtractor from "./PdfTextExtractor";
+// import PdfTextExtractor from "./PdfTextExtractor";
 
 export default function Hero() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -211,9 +211,9 @@ export default function Hero() {
           </form>
         </div>
 
-        <PdfTextExtractor
+        {/* <PdfTextExtractor
           style={{ transform: `translateY(${scrollY * -0.05}px)` }}
-        />
+        /> */}
         <PersonaSelection
           style={{ transform: `translateY(${scrollY * -0.02}px)` }}
         />

@@ -58,7 +58,7 @@ const AuthPage = () => {
   return (
     <div
       className="min-h-screen  flex items-center justify-center p-4"
-      style={{ marginTop: "100px", backgroundColor: "#1c1d31" }}
+      style={{ backgroundColor: "#1c1d31" }}
     >
       <div className="w-full max-w-md bg-slate-900 rounded-lg border border-blue-500/20 p-6">
         {/* Logo */}
