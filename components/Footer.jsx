@@ -1,4 +1,4 @@
-// Footer component for ResumeAI
+// Footer component for Job Matcher
 const Footer = () => {
   return (
     <footer
@@ -26,7 +26,7 @@ const Footer = () => {
                 </svg>
               </div>
               <span className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                ResumeAI
+                Job Matcher
               </span>
             </div>
             <p className="text-slate-400 text-sm">
@@ -139,7 +139,7 @@ const Footer = () => {
 
         <div className="border-t border-slate-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
           <div className="text-slate-400 text-sm">
-            © {new Date().getFullYear()} ResumeAI. All rights reserved.
+            © {new Date().getFullYear()} Job Matcher. All rights reserved.
           </div>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a

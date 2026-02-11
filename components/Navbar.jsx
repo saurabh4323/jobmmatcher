@@ -51,7 +51,7 @@ export default function Navbar() {
                   <line x1="15" y1="9" x2="15.01" y2="9" />
                 </svg>
               </div>
-              <span className="logo-text">Skillo</span>
+              <span className="logo-text">Job Matcher</span>
             </div>
           </Link>
         </div>
@@ -59,6 +59,7 @@ export default function Navbar() {
         {/* Nav Links */}
         <div className={`navbar-links ${menuOpen ? "active" : ""}`}>
           <Link href="/dashboard">Dashboard</Link>
+          <Link href="/learning">Learning</Link>
           <Link href="/jobs">Jobs</Link>
           <Link href="/resume">Resume</Link>
           <Link href="/interview">Practice</Link>

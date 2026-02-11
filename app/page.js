@@ -1,20 +1,17 @@
-import JobPlatform from "@/components/Home";
 import React from "react";
-import Head from "next/head";
 import "./globals.css";
-import Hero from "@/components/Hero";
 import UserSelectionPage from "@/components/Choose";
+
+export const metadata = {
+  title: "Job Matcher",
+  description: "Build your resume and get insights.",
+  robots: "index, follow",
+};
+
 export default function page() {
-  <Head>
-    <title>JOb Matcher</title>
-    <meta name="description" content="Build yoir resume and get insight." />
-    <meta name="robots" content="index, follow" />
-  </Head>;
   return (
     <div>
-      {/* <JobPlatform></JobPlatform> */}
-      {/* <Hero></Hero> */}
-      <UserSelectionPage></UserSelectionPage>
+      <UserSelectionPage />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connect";
 import Userjob from "@/schema/User";
+import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
@@ -27,15 +28,21 @@ export async function POST(req) {
       );
     }
 
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create new user
     const user = await Userjob.create({
       fullName,
       email,
-      password,
+      password: hashedPassword,
     });
 
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user.toObject();
+
     return NextResponse.json(
-      { message: "User created successfully", user },
+      { message: "User created successfully", user: userWithoutPassword },
       { status: 201 }
     );
   } catch (error) {

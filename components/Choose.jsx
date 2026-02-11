@@ -44,7 +44,7 @@ const UserSelectionPage = () => {
                 <button
                   className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center font-medium hover:bg-blue-500 transition-colors"
                   onClick={() => {
-                    route.push("/recuiter/register");
+                    route.push("/recruiter/register");
                   }}
                 >
                   Log In <ArrowRight size={16} className="ml-2" />
@@ -52,7 +52,7 @@ const UserSelectionPage = () => {
                 <button
                   className="w-full bg-transparent border border-blue-600 text-blue-400 py-3 px-4 rounded-lg flex items-center justify-center font-medium hover:bg-blue-900/20 transition-colors"
                   onClick={() => {
-                    route.push("/recuiter/register");
+                    route.push("/recruiter/register");
                   }}
                 >
                   Register <ArrowRight size={16} className="ml-2" />

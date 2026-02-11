@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connect";
 import Userjob from "@/schema/User";
+import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
@@ -17,7 +18,7 @@ export async function POST(req) {
     }
 
     // Find user by email
-    const user = await Userjob.findOne({ email, password });
+    const user = await Userjob.findOne({ email });
     if (!user) {
       return NextResponse.json(
         { error: "Invalid credentials" },
@@ -25,19 +26,22 @@ export async function POST(req) {
       );
     }
 
-    // Verify password (using comparePassword method if it's part of your schema)
-    // const isMatch = await user.comparePassword(password);
-    // if (!isMatch) {
-    //   return NextResponse.json(
-    //     { error: "Invalid credentials" },
-    //     { status: 401 }
-    //   );
-    // }
+    // Verify password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
+    }
+
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user.toObject();
 
     // If login is successful, return a success message
     return NextResponse.json({
       message: "Login successful",
-      user, // You can return user data if needed
+      user: userWithoutPassword,
     });
   } catch (error) {
     console.error("Login error:", error);

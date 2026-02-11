@@ -33,7 +33,7 @@ export default function Navbarrec() {
                     <Briefcase className="h-6 w-6 text-white" />
                   </div>
                   <span className="ml-3 text-white font-bold text-xl">
-                    Skillo
+                    Job Matcher
                   </span>
                 </div>
               </Link>
@@ -221,33 +221,34 @@ export default function Navbarrec() {
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-slate-800">
-            <Link href="/recruiter/home">
+            <Link href="/home">
               <div className="block px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 flex items-center">
                 <Home className="mr-3 h-5 w-5" />
                 Home
               </div>
             </Link>
 
-            <Link href="/recruiter/jobs">
+            <Link href="/jobsrec">
               <div className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-slate-700 hover:text-white flex items-center">
                 <Briefcase className="mr-3 h-5 w-5" />
                 Jobs
               </div>
             </Link>
 
-            <Link href="/recruiter/candidates">
+            <Link href="/candidates">
               <div className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-slate-700 hover:text-white flex items-center">
                 <Users className="mr-3 h-5 w-5" />
                 Candidates
               </div>
             </Link>
 
-            <Link href="/recruiter/interviews">
+            <Link href="/interviewlive">
               <div className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-slate-700 hover:text-white flex items-center">
                 <Calendar className="mr-3 h-5 w-5" />
                 Interviews
               </div>
             </Link>
+
 
             <Link href="/recruiter/messages">
               <div className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-slate-700 hover:text-white flex items-center">
