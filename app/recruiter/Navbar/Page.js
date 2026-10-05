@@ -20,6 +20,14 @@ export default function Navbarrec() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  const signOut = (e) => {
+    e.preventDefault();
+    localStorage.removeItem("recid");
+    localStorage.removeItem("recemail");
+    // Full reload so the layout swaps back to the student navbar
+    window.location.href = "/";
+  };
+
   return (
     <nav className="bg-slate-900 border-b border-blue-500/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -188,7 +196,8 @@ export default function Navbarrec() {
                     </div>
                   </a>
                   <a
-                    href="/logout"
+                    href="/"
+                    onClick={signOut}
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white"
                   >
                     <div className="flex items-center">
@@ -295,7 +304,8 @@ export default function Navbarrec() {
                 Settings
               </a>
               <a
-                href="/logout"
+                href="/"
+                onClick={signOut}
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-slate-700 hover:text-white flex items-center"
               >
                 <LogOut className="mr-3 h-5 w-5" />
