@@ -19,7 +19,6 @@
     "mongoose": "^8.10.0",
     "my": "file:",
     "next": "15.1.6",
-    "next-auth": "^4.24.11",
     "pdfjs-dist": "^5.1.91",
     "puppeteer": "^24.2.0",
     "react": "^19.0.0",
@@ -32,6 +31,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
-    "postcss": "^8.5.3"
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.19"
   }
 }

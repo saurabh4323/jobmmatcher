@@ -3,12 +3,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import "./nav.css";
 import { Menu, X } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const [show, setShow] = useState(false);
 
@@ -19,13 +17,7 @@ export default function Navbar() {
     }
   }, []);
 
-  useEffect(() => {
-    if (status === "authenticated") {
-      setShow(true);
-    }
-  }, [status]);
-
-  const userImage = session?.user?.image || "https://robohash.org/123";
+  const userImage = "https://robohash.org/123";
 
   return (
     <nav className="navbar" style={{ width: "100%", padding: "10px" }}>
@@ -68,7 +60,7 @@ export default function Navbar() {
 
         {/* Buttons/User */}
         <div className="navbar-buttons">
-          {status === "authenticated" || show ? (
+          {show ? (
             <img
               onClick={() => router.push("/login")}
               src={userImage}

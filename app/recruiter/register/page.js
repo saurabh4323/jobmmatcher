@@ -1,14 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Linkedin, Lock, Mail, User, ArrowRight, Loader2 } from "lucide-react";
 import axios from "axios";
-import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const AuthPage = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("login");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,12 +13,6 @@ const AuthPage = () => {
     email: "",
     password: "",
   });
-
-  useEffect(() => {
-    if (status !== "loading") {
-      setIsLoading(false);
-    }
-  }, [status]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -180,17 +171,6 @@ const AuthPage = () => {
               )}
             </button>
           </form>
-        </div>
-
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-600"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-slate-800/80 text-gray-400">
-              Or continue with
-            </span>
-          </div>
         </div>
 
         {/* Footer */}

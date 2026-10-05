@@ -1,16 +1,9 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { ArrowRight, Building, GraduationCap } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 const UserSelectionPage = () => {
-  const { data: session, status } = useSession();
   const route = useRouter();
-  useEffect(() => {
-    if (status === "authenticated") {
-      route.push("/student/home");
-    }
-  }, [status]);
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center p-4"

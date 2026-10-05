@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-const MONGODB_URI =
-  "mongodb+srv://saurabhiitr:saurabh8810@cluster0.jg0vdfg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const MONGODB_URI = process.env.MONGODB_URI;
 let cached = global.mongoose;
 
 if (!cached) {
@@ -11,12 +10,22 @@ async function connectDB() {
     return cached.conn;
   }
 
+  if (!MONGODB_URI) {
+    throw new Error("MONGODB_URI is not set");
+  }
+
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
     });
   }
-  cached.conn = await cached.promise;
+  try {
+    cached.conn = await cached.promise;
+  } catch (error) {
+    // Don't cache a failed connection, so the next request retries
+    cached.promise = null;
+    throw error;
+  }
   return cached.conn;
 }
 

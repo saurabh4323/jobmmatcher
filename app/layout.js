@@ -1,7 +1,6 @@
 "use client";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Authprovider from "@/components/AuthProvider";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Navbar from "@/components/Navbar";
@@ -35,11 +34,9 @@ export default function RootLayout({ children }) {
         <meta name="robots" content="index, follow" />
       </Head>
       <body className={`${geistMono.variable} antialiased`}>
-        <Authprovider>
-          {show ? <Navbarrec /> : <Navbar />}
-          <main>{children}</main>
-          <Footer />
-        </Authprovider>
+        {show ? <Navbarrec /> : <Navbar />}
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
