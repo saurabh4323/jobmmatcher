@@ -1,38 +1,52 @@
-import axios from "axios";
 import { NextResponse } from "next/server";
+
+const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 export async function POST(req) {
   try {
     const { prompt } = await req.json();
+    if (typeof prompt !== "string" || !prompt.trim()) {
+      return NextResponse.json({ error: "A prompt is required." }, { status: 400 });
+    }
 
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
-      console.error("Missing API Key");
       return NextResponse.json(
-        { error: "API Key is missing" },
+        { error: "GROQ_API_KEY is not configured in .env.local." },
         { status: 500 }
       );
     }
 
-    const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
+    const response = await fetch(GROQ_CHAT_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+      body: JSON.stringify({
+        model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
+        messages: [{ role: "user", content: prompt.trim() }],
+        temperature: 0.4,
+      }),
+    });
 
-    return NextResponse.json(response.data, { status: 200 });
+    const result = await response.json();
+    if (!response.ok) {
+      console.error("Groq API request failed:", response.status, result?.error?.message);
+      return NextResponse.json(
+        { error: result?.error?.message || "Groq request failed." },
+        { status: response.status }
+      );
+    }
+
+    // Keep the shape expected by the existing resume and analysis screens.
+    return NextResponse.json({
+      candidates: [
+        { content: { parts: [{ text: result.choices?.[0]?.message?.content || "" }] } },
+      ],
+    });
   } catch (error) {
-    console.error("API Error:", error.response?.data || error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Groq route error:", error.message);
+    return NextResponse.json({ error: "Unable to process the AI request." }, { status: 500 });
   }
 }

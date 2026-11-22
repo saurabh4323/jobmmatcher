@@ -8,6 +8,12 @@ const JobSchema = new mongoose.Schema({
   name: {
     type: String,
   },
+  recruiterEmail: {
+    type: String,
+    lowercase: true,
+    trim: true,
+    index: true,
+  },
   location: {
     type: String,
   },
@@ -22,7 +28,7 @@ const JobSchema = new mongoose.Schema({
   },
   jobType: {
     type: String,
-    enum: ["Full-time", "Part-time", "Contract"],
+    enum: ["Full-time", "Part-time", "Contract", "Freelance", "Internship"],
     default: "Full-time",
   },
   salary: {

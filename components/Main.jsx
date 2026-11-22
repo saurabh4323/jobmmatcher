@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import JobCard from "../components/JobCard";
 import {
@@ -7,10 +8,10 @@ import {
   FileBadge,
   Filter,
   Bell,
-  Check,
 } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [ourJobs, setOurJobs] = useState([]);
@@ -18,17 +19,6 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [showInterestedJobs, setShowInterestedJobs] = useState(false);
   const [activeTab, setActiveTab] = useState("all"); // "all", "matched", "ourJobs"
-  const [appliedJobs, setAppliedJobs] = useState([]);
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState("");
-
-  // Load applied jobs from localStorage on initial render
-  useEffect(() => {
-    const savedAppliedJobs = localStorage.getItem("appliedJobs");
-    if (savedAppliedJobs) {
-      setAppliedJobs(JSON.parse(savedAppliedJobs));
-    }
-  }, []);
 
   // Fetch both job sources immediately when component mounts
   useEffect(() => {
@@ -95,36 +85,6 @@ export default function Home() {
     setActiveTab(tab);
   };
 
-  // Update localStorage whenever appliedJobs changes
-  useEffect(() => {
-    localStorage.setItem("appliedJobs", JSON.stringify(appliedJobs));
-  }, [appliedJobs]);
-
-  // Function to handle applying for a job
-  const handleApply = (jobId) => {
-    if (!appliedJobs.includes(jobId)) {
-      setAppliedJobs([...appliedJobs, jobId]);
-      showNotificationAlert(`Application submitted successfully!`);
-    }
-  };
-
-  // Function to handle applying for all jobs at once
-  const applyToAllJobs = () => {
-    const allJobIds = ourJobs.map((job) => job._id);
-    setAppliedJobs(allJobIds);
-    showNotificationAlert(
-      `Applied to all ${ourJobs.length} jobs successfully!`
-    );
-  };
-
-  // Function to show notification
-  const showNotificationAlert = (message) => {
-    setNotificationMessage(message);
-    setShowNotification(true);
-    setTimeout(() => {
-      setShowNotification(false);
-    }, 3000);
-  };
 
   if (loading) {
     return (
@@ -162,13 +122,6 @@ export default function Home() {
       className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 py-12 px-4"
       style={{ marginTop: "80px" }}
     >
-      {/* Notification */}
-      {showNotification && (
-        <div className="fixed top-24 right-4 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center z-50 max-w-xs">
-          <Check className="mr-2 h-5 w-5" />
-          <span>{notificationMessage}</span>
-        </div>
-      )}
 
       <div className="container mx-auto max-w-7xl">
         <div className="mb-12 text-center">
@@ -282,13 +235,6 @@ export default function Home() {
                   Our Job Listings ({ourJobs.length})
                 </h2>
 
-                <button
-                  onClick={applyToAllJobs}
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
-                >
-                  <Check className="mr-2 h-5 w-5" />
-                  Apply to All Jobs
-                </button>
               </div>
 
               {ourJobs.length > 0 ? (
@@ -348,21 +294,10 @@ export default function Home() {
                       </p>
 
                       <button
-                        onClick={() => handleApply(job._id)}
-                        className={`w-full mt-2 px-4 py-2 rounded transition-colors flex items-center justify-center ${
-                          appliedJobs.includes(job._id)
-                            ? "bg-red-500 hover:bg-red-600 text-white"
-                            : "bg-blue-500 hover:bg-blue-600 text-white"
-                        }`}
+                        onClick={() => router.push(`/jobs/${job._id}`)}
+                        className="w-full mt-2 px-4 py-2 rounded transition-colors bg-blue-500 hover:bg-blue-600 text-white"
                       >
-                        {appliedJobs.includes(job._id) ? (
-                          <>
-                            <Check className="mr-2 h-5 w-5" />
-                            Applied
-                          </>
-                        ) : (
-                          "Apply Now"
-                        )}
+                        Apply Now
                       </button>
                     </div>
                   ))}

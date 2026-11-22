@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Linkedin, Lock, Mail, User, ArrowRight, Loader2 } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,12 @@ const AuthPage = () => {
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("mode") === "signup") {
+      setActiveTab("signup");
+    }
+  }, []);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -30,7 +36,7 @@ const AuthPage = () => {
       const endpoint =
         activeTab === "login" ? "/api/rec/login" : "/api/rec/register";
 
-      const response = await axios.post(endpoint, {
+      await axios.post(endpoint, {
         fullName: activeTab === "signup" ? e.target.fullName.value : undefined,
         email: e.target.email.value,
         password: e.target.password.value,
@@ -177,7 +183,7 @@ const AuthPage = () => {
         <p className="mt-8 text-center text-sm text-gray-400">
           {activeTab === "login" ? (
             <>
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <button
                 onClick={() => setActiveTab("signup")}
                 className="text-blue-400 hover:text-blue-300 font-medium transition-colors"

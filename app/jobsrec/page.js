@@ -1,13 +1,27 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const JobListing = () => {
+  const router = useRouter();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [recruiterData, setRecruiterData] = useState(null);
+  const [copiedJobId, setCopiedJobId] = useState("");
+
+  const copyShareLink = async (jobId) => {
+    const shareUrl = `${window.location.origin}/jobs/${jobId}`;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedJobId(jobId);
+      window.setTimeout(() => setCopiedJobId(""), 2000);
+    } catch {
+      setError(`Copy failed. Share this job link: ${shareUrl}`);
+    }
+  };
 
   useEffect(() => {
     const fetchRecruiterData = async () => {
@@ -29,25 +43,16 @@ const JobListing = () => {
     const fetchJobs = async () => {
       try {
         setLoading(true);
+        setError(null);
 
-        if (searchTerm) {
-          const response = await axios.get(`/api/rec/job/${searchTerm}`);
-          setJobs(response.data.data || []);
-          console.log(
-            `Found ${response.data.data.length} jobs for "${searchTerm}"`
-          );
-        } else if (recruiterData?.fullName) {
-          const response = await axios.get(
-            `/api/rec/job/${recruiterData.fullName}`
-          );
-          setJobs(response.data.data || []);
-          console.log(
-            `Found ${response.data.data.length} jobs for recruiter ${recruiterData.fullName}`
-          );
-        } else {
-          console.log("Waiting for recruiter data...");
-          setJobs([]);
-        }
+        const response = searchTerm
+          ? await axios.get(`/api/rec/job/${encodeURIComponent(searchTerm)}`)
+          : await axios.get("/api/rec/job");
+        const fetchedJobs = Array.isArray(response.data)
+          ? response.data
+          : response.data?.data || [];
+
+        setJobs(fetchedJobs);
       } catch (err) {
         console.error("Error fetching jobs:", err);
         setError("Failed to load jobs. Please try again.");
@@ -56,10 +61,8 @@ const JobListing = () => {
       }
     };
 
-    if (recruiterData || searchTerm) {
-      fetchJobs();
-    }
-  }, [recruiterData, searchTerm]);
+    fetchJobs();
+  }, [searchTerm]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -116,7 +119,7 @@ const JobListing = () => {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {jobs.map((job) => (
                   <div
-                    key={job.id}
+                    key={job._id}
                     className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-700"
                   >
                     <div className="p-6">
@@ -171,9 +174,20 @@ const JobListing = () => {
                       )}
                     </div>
 
-                    <div className="px-6 py-4 bg-gray-850 border-t border-gray-700">
-                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors duration-200">
+                    <div className="grid grid-cols-2 gap-3 px-6 py-4 bg-gray-850 border-t border-gray-700">
+                      <button
+                        type="button"
+                        onClick={() => router.push(`/jobsrec/${job._id}`)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors duration-200"
+                      >
                         View Details
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => copyShareLink(job._id)}
+                        className="rounded-md border border-gray-600 px-4 py-2 text-gray-200 transition-colors hover:bg-gray-700"
+                      >
+                        {copiedJobId === job._id ? "Link copied" : "Copy share link"}
                       </button>
                     </div>
                   </div>

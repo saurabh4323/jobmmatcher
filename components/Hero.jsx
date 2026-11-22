@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import "./Hero.css";
 import Link from "next/link";
-import axios from "axios";
 import {
   Rocket,
   Terminal,
@@ -23,7 +22,6 @@ import {
   ExternalLink,
   Info,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import PersonaSelection from "./PersonaSelection";
 // import PdfTextExtractor from "./PdfTextExtractor";
 
@@ -32,15 +30,7 @@ export default function Hero() {
   const [activeSection, setActiveSection] = useState("home");
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showExplanation, setShowExplanation] = useState(false);
-  const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [data, setdata] = useState([]);
   const [scrollY, setScrollY] = useState(0);
-  const api_endpoint = "https://nubela.co/proxycurl/api/v2/linkedin";
-  const linkedin_profile_url = linkedinUrl;
-  const api_key = "OZ49GF4S4U4pCbB_1Cp0uQ";
-  // components/LinkedIn.jsx
-  const router = useRouter();
 
   // Create animated background elements
   const [animatedElements, setAnimatedElements] = useState([]);
@@ -73,40 +63,6 @@ export default function Hero() {
     }
     setAnimatedElements(elements);
   }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsAnalyzing(true);
-
-    try {
-      // Clean the URL to ensure proper format
-      const cleanUrl = linkedinUrl.replace(/^https?:\/\//, "");
-
-      const response = await axios.get(
-        `/api/proxycurl/${encodeURIComponent(cleanUrl)}`
-      );
-
-      console.log(response.data);
-      let saving;
-      setdata(response.data);
-      if (window != undefined) {
-        saving = localStorage.setItem(
-          "profiledata",
-          JSON.stringify(response.data)
-        );
-      }
-      router.push("/dashboard");
-    } catch (error) {
-      console.log("Full error object:", error);
-      console.log("Response data:", error.response?.data);
-      console.error(
-        "Error fetching LinkedIn data:",
-        error.response?.data?.error || error.message
-      );
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
 
   return (
     <section
@@ -178,37 +134,16 @@ export default function Hero() {
               and get personalized recommendations.
             </a>
           </div>
-          <form
-            onSubmit={handleSubmit}
+          <div
             className="max-w-xl mx-auto mb-8"
             style={{ transform: `translateY(${scrollY * -0.1}px)` }}
           >
-            <div className="relative">
-              <input
-                type="url"
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                placeholder="Enter your LinkedIn URL"
-                className="w-full px-6 py-4 bg-gray-800/50 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 text-white placeholder-gray-400 backdrop-blur-sm"
-                required
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-2 px-4 py-2 hover:bg-blue-700 rounded-lg transition-all transform hover:scale-105 flex items-center space-x-2"
-                disabled={isAnalyzing}
-                style={{ backgroundColor: "#1d4ed8" }}
-              >
-                {isAnalyzing ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
-                ) : (
-                  <>
-                    <Search className="h-5 w-5" />
-                    <span>Analyze</span>
-                  </>
-                )}
-              </button>
+            <p className="mb-4 text-slate-300">Build a resume from your own details or upload an existing file.</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link href="/resume" className="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-500">Upload or create resume</Link>
+              <Link href="/resume" className="rounded-lg border border-slate-500 px-5 py-3 font-medium text-white transition hover:border-white">Choose a resume design</Link>
             </div>
-          </form>
+          </div>
         </div>
 
         {/* <PdfTextExtractor

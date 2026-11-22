@@ -35,7 +35,7 @@ const Login = () => {
           <h2 className="mb-2 text-2xl font-bold text-gray-900">
             Welcome Back!
           </h2>
-          <p className="mb-6 text-gray-600">You're signed in</p>
+          <p className="mb-6 text-gray-600">You&apos;re signed in</p>
         </div>
         <div className="flex flex-col items-center gap-6">
           <button

@@ -194,7 +194,7 @@ print(f"Model coefficients: {model.coef_[0]}")`);
                         <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
                         <div>
                           <p className="text-green-400 font-bold text-sm">Challenge Completed!</p>
-                          <p className="text-gray-400 text-xs mt-1">You've successfully trained a Logistic Regression model using Scikit-Learn.</p>
+                          <p className="text-gray-400 text-xs mt-1">You&apos;ve successfully trained a Logistic Regression model using Scikit-Learn.</p>
                         </div>
                       </div>
                     )}
@@ -202,7 +202,7 @@ print(f"Model coefficients: {model.coef_[0]}")`);
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center text-gray-600 opacity-50 italic">
                     <Terminal className="h-12 w-12 mb-4" />
-                    <p>Click "Run Python Code" to see the results here.</p>
+                    <p>Click &quot;Run Python Code&quot; to see the results here.</p>
                   </div>
                 )}
               </div>

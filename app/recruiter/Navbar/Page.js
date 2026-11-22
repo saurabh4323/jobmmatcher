@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Home,
   Briefcase,
@@ -13,7 +14,6 @@ import {
   LogOut,
   ChevronDown,
 } from "lucide-react";
-import Link from "next/link";
 
 export default function Navbarrec() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -195,7 +195,7 @@ export default function Navbarrec() {
                       Settings
                     </div>
                   </a>
-                  <a
+                  <Link
                     href="/"
                     onClick={signOut}
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white"
@@ -204,7 +204,7 @@ export default function Navbarrec() {
                       <LogOut className="mr-2 h-4 w-4" />
                       Sign out
                     </div>
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>
@@ -303,14 +303,14 @@ export default function Navbarrec() {
                 <Settings className="mr-3 h-5 w-5" />
                 Settings
               </a>
-              <a
+              <Link
                 href="/"
                 onClick={signOut}
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-slate-700 hover:text-white flex items-center"
               >
                 <LogOut className="mr-3 h-5 w-5" />
                 Sign out
-              </a>
+              </Link>
             </div>
           </div>
         </div>

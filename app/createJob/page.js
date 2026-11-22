@@ -8,6 +8,8 @@ import axios from "axios";
 export default function CreateJobPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdJobId, setCreatedJobId] = useState("");
+  const [linkCopied, setLinkCopied] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     company: "",
@@ -38,20 +40,16 @@ export default function CreateJobPage() {
       const jobData = {
         ...formData,
         name: formData.company, // ✅ Fix: rename company to name
+        recruiterEmail: localStorage.getItem("recemail") || "",
         skills: formData.skills.split(",").map((skill) => skill.trim()),
         createdAt: new Date().toISOString(), // ✅ Add createdAt
       };
       delete jobData.company; // Optional: remove company field
 
-      console.log("Sending jobData:", jobData);
-
       const response = await axios.post("/api/rec/job", jobData);
-      console.log(response.data);
-
-      router.push("/jobsrec");
-      router.refresh();
+      setCreatedJobId(response.data?.newJob?._id || "");
+      setLinkCopied(false);
     } catch (err) {
-      console.error("Submit error:", err);
       setError(err.response?.data?.error || "Something went wrong");
     } finally {
       setIsSubmitting(false);
@@ -75,6 +73,43 @@ export default function CreateJobPage() {
           </div>
         )}
 
+        {createdJobId ? (
+          <section className="rounded-xl border border-emerald-400/30 bg-emerald-950/30 p-6">
+            <h2 className="text-xl font-semibold text-emerald-200">Job posted successfully</h2>
+            <p className="mt-2 text-sm text-slate-300">
+              Share this link with candidates. Applications submitted through it will appear in your Candidates page.
+            </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <input
+                readOnly
+                aria-label="Shareable job link"
+                value={typeof window === "undefined" ? "" : `${window.location.origin}/jobs/${createdJobId}`}
+                className="min-w-0 flex-1 rounded-md border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-200"
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(`${window.location.origin}/jobs/${createdJobId}`);
+                    setLinkCopied(true);
+                  } catch {
+                    setError("Could not copy the link. Select and copy it from the field.");
+                  }
+                }}
+                className="rounded-md bg-blue-600 px-5 py-2 font-medium text-white hover:bg-blue-500"
+              >
+                {linkCopied ? "Copied" : "Copy link"}
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/jobsrec")}
+                className="rounded-md border border-slate-600 px-5 py-2 font-medium text-slate-200 hover:bg-slate-800"
+              >
+                Back to jobs
+              </button>
+            </div>
+          </section>
+        ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Job Title & Company */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -196,6 +231,7 @@ export default function CreateJobPage() {
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

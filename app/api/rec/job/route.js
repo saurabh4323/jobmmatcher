@@ -9,8 +9,8 @@ export async function POST(req) {
     const body = await req.json();
     const {
       title,
-
       name = body.company,
+      recruiterEmail,
       location,
       description,
       skills,
@@ -21,20 +21,29 @@ export async function POST(req) {
       createdAt,
     } = body;
 
-    if (
-      !title ||
-      !name ||
-      !location ||
-      !description ||
-      !createdAt ||
-      !skills ||
-      !experience ||
-      !jobType ||
-      !salary ||
-      !applicationDeadline
-    ) {
+    const requiredFields = { title, name, recruiterEmail, location, description, experience, jobType };
+    const missingFields = Object.entries(requiredFields)
+      .filter(([, value]) => typeof value !== "string" || !value.trim())
+      .map(([field]) => field);
+    const normalizedSkills = Array.isArray(skills)
+      ? skills.map((skill) => String(skill).trim()).filter(Boolean)
+      : typeof skills === "string"
+        ? skills.split(",").map((skill) => skill.trim()).filter(Boolean)
+        : [];
+
+    if (normalizedSkills.length === 0) missingFields.push("skills");
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: `Please complete the required fields: ${missingFields.join(", ")}.` },
+        { status: 400 }
+      );
+    }
+
+    const parsedDeadline = applicationDeadline ? new Date(applicationDeadline) : undefined;
+    if (parsedDeadline && Number.isNaN(parsedDeadline.getTime())) {
+      return NextResponse.json(
+        { error: "Application deadline must be a valid date." },
         { status: 400 }
       );
     }
@@ -42,14 +51,15 @@ export async function POST(req) {
     const newJob = await job.create({
       title,
       name,
+      recruiterEmail: recruiterEmail.trim().toLowerCase(),
       location,
       description,
-      skills,
+      skills: normalizedSkills,
       experience,
       jobType,
-      salary,
-      applicationDeadline,
-      createdAt,
+      salary: typeof salary === "string" ? salary.trim() : "",
+      applicationDeadline: parsedDeadline,
+      createdAt: createdAt ? new Date(createdAt) : undefined,
     });
 
     return NextResponse.json(
@@ -68,7 +78,7 @@ export async function POST(req) {
 export async function GET(req) {
   try {
     await connectDB();
-    const jobs = await job.find({}).sort({ createdAt: -1 });
+    const jobs = await job.find({}).select("-recruiterEmail").sort({ createdAt: -1 });
     return NextResponse.json(jobs, { status: 200 });
   } catch (error) {
     console.error("Error fetching jobs:", error);

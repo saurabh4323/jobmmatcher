@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Linkedin, Lock, Mail, User } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,13 @@ const AuthPage = () => {
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("mode") === "signup") {
+      setActiveTab("signup");
+    }
+  }, []);
+
   // Handle input changes
   const handleChange = (e) => {
     setFormData({
@@ -160,7 +167,7 @@ const AuthPage = () => {
         <p className="mt-6 text-center text-sm text-gray-400">
           {activeTab === "login" ? (
             <>
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <button
                 onClick={() => setActiveTab("signup")}
                 className="text-blue-500 hover:text-blue-400"

@@ -1,96 +1,105 @@
 "use client";
+
 import React from "react";
-import { ArrowRight, Building, GraduationCap } from "lucide-react";
-import { useRouter } from "next/navigation";
-const UserSelectionPage = () => {
-  const route = useRouter();
+import Link from "next/link";
+import {
+  ArrowDownRight,
+  ArrowRight,
+  BriefcaseBusiness,
+  Check,
+  GraduationCap,
+  Sparkles,
+} from "lucide-react";
+
+const paths = [
+  {
+    name: "For candidates",
+    title: "Build a career that fits you.",
+    description:
+      "Make your next move with thoughtful tools for your resume, job search, learning, and interview practice.",
+    href: "/register?mode=signup",
+    loginHref: "/register",
+    label: "Create candidate account",
+    icon: GraduationCap,
+    accent: "candidate",
+    features: ["Create a polished resume", "Find roles that fit", "Practice with confidence"],
+  },
+  {
+    name: "For recruiters",
+    title: "Meet your next great hire.",
+    description:
+      "Bring your hiring workflow together, share opportunities, and connect with people ready to grow.",
+    href: "/recruiter/register?mode=signup",
+    loginHref: "/recruiter/register",
+    label: "Create recruiter account",
+    icon: BriefcaseBusiness,
+    accent: "recruiter",
+    features: ["Publish open roles", "Reach motivated talent", "Keep hiring organized"],
+  },
+];
+
+export default function UserSelectionPage() {
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-4"
-      style={{ marginTop: "30px", backgroundColor: "#1c1d31" }}
-    >
-      <div className="w-full max-w-3xl">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-3 tracking-tight">
-            SKILLO
+    <section className="path-page">
+      <div className="path-orb path-orb-one" aria-hidden="true" />
+      <div className="path-orb path-orb-two" aria-hidden="true" />
+
+      <div className="path-content">
+        <div className="path-intro">
+          <div className="path-eyebrow">
+            <Sparkles size={15} aria-hidden="true" />
+            <span>Your next chapter starts here</span>
+          </div>
+          <h1>
+            Find your way to <span>what’s next.</span>
           </h1>
-          <p className="text-gray-400 text-lg">
-            Select your path to get started
+          <p>
+            A clearer path to better opportunities, stronger teams, and work that
+            moves you forward.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Recruiter Card */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 hover:border-blue-500 transition-all duration-300 group">
-            <div className="flex flex-col items-center text-center h-full">
-              <div className="h-20 w-20 bg-blue-900/30 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-900/50 transition-colors">
-                <Building size={36} className="text-blue-400" />
-              </div>
-              <h2 className="text-2xl font-semibold text-white mb-3">
-                Recruiter
-              </h2>
-              <p className="text-gray-400 mb-8">
-                Connect with top talent and build your dream team
-              </p>
-
-              <div className="mt-auto w-full space-y-4">
-                <button
-                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center font-medium hover:bg-blue-500 transition-colors"
-                  onClick={() => {
-                    route.push("/recruiter/register");
-                  }}
-                >
-                  Log In <ArrowRight size={16} className="ml-2" />
-                </button>
-                <button
-                  className="w-full bg-transparent border border-blue-600 text-blue-400 py-3 px-4 rounded-lg flex items-center justify-center font-medium hover:bg-blue-900/20 transition-colors"
-                  onClick={() => {
-                    route.push("/recruiter/register");
-                  }}
-                >
-                  Register <ArrowRight size={16} className="ml-2" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Student Card */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 hover:border-purple-500 transition-all duration-300 group">
-            <div className="flex flex-col items-center text-center h-full">
-              <div className="h-20 w-20 bg-purple-900/30 rounded-full flex items-center justify-center mb-6 group-hover:bg-purple-900/50 transition-colors">
-                <GraduationCap size={36} className="text-purple-400" />
-              </div>
-              <h2 className="text-2xl font-semibold text-white mb-3">
-                Student
-              </h2>
-              <p className="text-gray-400 mb-8">
-                Launch your career with opportunities that match your skills
-              </p>
-
-              <div className="mt-auto w-full space-y-4">
-                <button
-                  className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center font-medium hover:bg-purple-500 transition-colors"
-                  onClick={() => {
-                    route.push("/register");
-                  }}
-                >
-                  Log In <ArrowRight size={16} className="ml-2" />
-                </button>
-                <button
-                  className="w-full bg-transparent border border-purple-600 text-purple-400 py-3 px-4 rounded-lg flex items-center justify-center font-medium hover:bg-purple-900/20 transition-colors"
-                  onClick={() => {
-                    route.push("/register");
-                  }}
-                >
-                  Register <ArrowRight size={16} className="ml-2" />
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="path-grid">
+          {paths.map((path) => {
+            const Icon = path.icon;
+            return (
+              <article className={`path-card path-card-${path.accent}`} key={path.name}>
+                <div className="path-card-top">
+                  <div className="path-icon">
+                    <Icon size={23} strokeWidth={1.8} aria-hidden="true" />
+                  </div>
+                  <span className="path-audience">{path.name}</span>
+                  <ArrowDownRight className="path-card-arrow" size={20} aria-hidden="true" />
+                </div>
+                <h2>{path.title}</h2>
+                <p className="path-description">{path.description}</p>
+                <ul className="path-features">
+                  {path.features.map((feature) => (
+                    <li key={feature}>
+                      <Check size={16} aria-hidden="true" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <div className="path-actions">
+                  <Link className="path-primary" href={path.href}>
+                    {path.label}
+                    <ArrowRight size={17} aria-hidden="true" />
+                  </Link>
+                  <Link className="path-login" href={path.loginHref}>
+                    Already have an account? <span>Log in</span>
+                  </Link>
+                </div>
+              </article>
+            );
+          })}
         </div>
-      </div>
-    </div>
-  );
-};
 
-export default UserSelectionPage;
+        <p className="path-note">
+          One platform for every step of the journey. Choose your path to get
+          started.
+        </p>
+      </div>
+    </section>
+  );
+}

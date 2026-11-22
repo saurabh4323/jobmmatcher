@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Rocket,
   Terminal,
@@ -20,8 +21,6 @@ import {
   ExternalLink,
   Info,
 } from "lucide-react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
 import Navbar from "./Navbar";
 
 const JobPlatform = () => {
@@ -29,47 +28,6 @@ const JobPlatform = () => {
   const [activeSection, setActiveSection] = useState("home");
   const [hoveredCard, setHoveredCard] = useState(null);
   const [showExplanation, setShowExplanation] = useState(false);
-  const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [data, setdata] = useState([]);
-  const api_endpoint = "https://nubela.co/proxycurl/api/v2/linkedin";
-  const linkedin_profile_url = linkedinUrl;
-  const api_key = "kl_ojowsbUDnKlGYvV6AyQ";
-  // components/LinkedIn.jsx
-  const router = useRouter();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsAnalyzing(true);
-
-    try {
-      // Clean the URL to ensure proper format
-      const cleanUrl = linkedinUrl.replace(/^https?:\/\//, "");
-
-      const response = await axios.get(
-        `/api/proxycurl/${encodeURIComponent(cleanUrl)}`
-      );
-
-      console.log(response.data);
-      let saving;
-      setdata(response.data);
-      if (window != undefined) {
-        saving = localStorage.setItem(
-          "profiledata",
-          JSON.stringify(response.data)
-        );
-      }
-      router.push("/dashboard");
-    } catch (error) {
-      console.log("Full error object:", error);
-      console.log("Response data:", error.response?.data);
-      console.error(
-        "Error fetching LinkedIn data:",
-        error.response?.data?.error || error.message
-      );
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
@@ -93,32 +51,7 @@ const JobPlatform = () => {
             track applications, and get personalized recommendations.
           </p>
 
-          <form onSubmit={handleSubmit} className="max-w-xl mx-auto mb-8">
-            <div className="relative">
-              <input
-                type="url"
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                placeholder="Enter your LinkedIn URL"
-                className="w-full px-6 py-4 bg-gray-800/50 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 text-white placeholder-gray-400"
-                required
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all transform hover:scale-105 flex items-center space-x-2"
-                disabled={isAnalyzing}
-              >
-                {isAnalyzing ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
-                ) : (
-                  <>
-                    <Search className="h-5 w-5" />
-                    <span>Analyze</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
+          <Link href="/resume" className="mb-8 inline-flex rounded-lg bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-500">Upload or create a resume</Link>
         </div>
       </div>
 
