@@ -4,6 +4,9 @@
 
 :root {
   color-scheme: light;
+  --font-sans: "Inter";
+  --font-display: "Plus Jakarta Sans";
+  --font-mono: "JetBrains Mono";
 }
 
 @layer base {
