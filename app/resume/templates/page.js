@@ -1,34 +1,53 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { ArrowRight, Palette, Layers, Grid } from "lucide-react";
-
-const templates = [
-  { id: "1", name: "Modern Minimal", description: "A clean, professional layout with balanced white space.", icon: Palette },
-  { id: "2", name: "Creative Bold", description: "A colorful design with a confident visual style.", icon: Layers },
-  { id: "3", name: "Classic Elegant", description: "A traditional format with refined typography.", icon: Grid },
-];
+import Link from "next/link";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useProfile } from "@/lib/profile";
+import { RESUME_TEMPLATES, ResumeDocument } from "@/components/resume/templates";
+import { Alert, LoadingBlock, PageHeader } from "@/components/ui";
 
 export default function ResumeTemplatesPage() {
-  const router = useRouter();
+  const { profile, loading, error } = useProfile();
+
+  if (loading) return <LoadingBlock label="Loading designs…" />;
+
   return (
-    <main className="min-h-screen bg-[#111322] px-5 py-16 text-white">
-      <div className="mx-auto max-w-5xl">
-        <p className="mb-3 text-sm font-medium text-blue-300">RESUME BUILDER</p>
-        <h1 className="text-4xl font-bold tracking-tight">Choose a design</h1>
-        <p className="mt-3 text-slate-300">Your details are saved in this browser. Pick a template to preview your resume.</p>
-        <div className="mt-9 grid gap-5 md:grid-cols-3">
-          {templates.map(({ id, name, description, icon: Icon }) => (
-            <button key={id} onClick={() => router.push(`/resume/${id}`)} className="rounded-2xl border border-slate-700 bg-slate-900 p-6 text-left transition hover:border-blue-400">
-              <Icon className="mb-5 text-blue-300" size={27} />
-              <span className="block text-xl font-semibold">{name}</span>
-              <span className="mt-2 block text-sm text-slate-400">{description}</span>
-              <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-blue-300">Use this design <ArrowRight size={16} /></span>
-            </button>
-          ))}
-        </div>
-        <button onClick={() => router.push("/resume")} className="mt-7 text-sm text-slate-400 hover:text-white">← Back to resume details</button>
+    <div className="mx-auto max-w-7xl">
+      <PageHeader
+        kicker="Resume builder"
+        title="Choose a design"
+        description="Every theme uses the details from your profile. Open one to preview it full-size and download it as a PDF."
+        actions={<Link href="/resume" className="btn btn-ghost"><ArrowLeft size={16} /> Edit details</Link>}
+      />
+      <Alert className="mb-6">{error}</Alert>
+      {!profile.full_name && (
+        <Alert tone="info" className="mb-6">
+          Your resume is empty. <Link href="/resume" className="font-semibold underline">Add your details</Link> first.
+        </Alert>
+      )}
+
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        {RESUME_TEMPLATES.map((template) => (
+          <Link key={template.id} href={`/resume/${template.id}`} className="card card-hover group flex flex-col overflow-hidden">
+            {/* Live, scaled-down thumbnail of the real template */}
+            <div className="relative h-72 overflow-hidden border-b border-slate-200 bg-ink-950" aria-hidden="true">
+              <div className="pointer-events-none absolute left-1/2 top-4 w-[794px] origin-top -translate-x-1/2 scale-[0.32]">
+                <ResumeDocument template={template.id} profile={profile} />
+              </div>
+            </div>
+            <div className="flex flex-1 flex-col p-5">
+              <div className="flex items-center gap-2">
+                {template.swatch.map((color) => (
+                  <span key={color} className="h-3 w-3 rounded-full border border-slate-300" style={{ background: color }} />
+                ))}
+                <h2 className="ml-1 text-lg font-semibold">{template.name}</h2>
+              </div>
+              <p className="mt-2 flex-1 text-sm leading-6 text-slate-500">{template.description}</p>
+              <span className="btn-link mt-4">Use {template.name} <ArrowRight size={14} className="transition group-hover:translate-x-1" /></span>
+            </div>
+          </Link>
+        ))}
       </div>
-    </main>
+    </div>
   );
 }

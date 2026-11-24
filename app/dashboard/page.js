@@ -1,317 +1,199 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  Briefcase,
-  GraduationCap,
-  Award,
-  Code,
-  User,
-  Rocket,
-  Bell,
-  ChevronRight,
-  MapPin,
-  Link,
-  Building,
-  Calendar,
-  FileText,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
-import Navbar from "@/components/Navbar";
 
-const Dashboard = () => {
-  const [profileData, setProfileData] = useState([]);
-  const [openSections, setOpenSections] = useState({
-    experience: true,
-    education: true,
-    skills: true,
-    certifications: true,
-  });
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  CheckCircle2,
+  ClipboardList,
+  Code2,
+  FileText,
+  MapPin,
+  MessagesSquare,
+  Sparkles,
+  Trophy,
+} from "lucide-react";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { api, formatDate, timeAgo } from "@/lib/client";
+import { completeness, matchSkills, useProfile } from "@/lib/profile";
+import { Alert, LoadingBlock, StatCard, StatusBadge } from "@/components/ui";
+
+const QUICK_ACTIONS = [
+  { href: "/resume", label: "Build resume", icon: FileText, tone: "text-brand" },
+  { href: "/interview", label: "Mock interview", icon: MessagesSquare, tone: "text-accent" },
+  { href: "/programming", label: "Coding round", icon: Code2, tone: "text-info" },
+  { href: "/jobs", label: "Browse jobs", icon: BriefcaseBusiness, tone: "text-success" },
+];
+
+export default function DashboardPage() {
+  const { user } = useAuth();
+  const { profile, loading: profileLoading, error: profileError } = useProfile();
+  const [applications, setApplications] = useState([]);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    let retrive;
-    if (window !== undefined) {
-      retrive = localStorage.getItem("profiledata");
-    }
-    if (retrive) {
-      setProfileData(JSON.parse(retrive));
-    } else {
-      setProfileData(null);
-    }
+    Promise.all([api("/api/applications"), api("/api/jobs")])
+      .then(([apps, list]) => {
+        setApplications(apps.applications || []);
+        setJobs(list.jobs || []);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
-  const toggleSection = (section) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
-  };
+  const score = completeness(profile);
+  const firstName = (profile.full_name || user?.fullName || "").split(" ")[0];
+  const counts = useMemo(
+    () => ({
+      total: applications.length,
+      interviewed: applications.filter((item) => item.status === "interviewed").length,
+      offered: applications.filter((item) => item.status === "offered").length,
+    }),
+    [applications]
+  );
 
-  const formatDate = (dateObj) => {
-    if (!dateObj) return "";
-    if (typeof dateObj === "string") return dateObj;
+  const appliedIds = new Set(applications.map((item) => String(item.jobId)));
+  const recommended = jobs
+    .filter((job) => !appliedIds.has(String(job._id)))
+    .map((job) => ({ job, matched: matchSkills(profile.skills, job.skills || []) }))
+    .sort((a, b) => b.matched.length - a.matched.length)
+    .slice(0, 4);
 
-    const { month, year } = dateObj;
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    return `${monthNames[month - 1]} ${year}`;
-  };
-
-  if (!profileData) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-950 text-gray-400">
-        No profile data available
-      </div>
-    );
-  }
+  if (profileLoading && loading) return <LoadingBlock label="Loading your dashboard…" />;
 
   return (
-    <>
-      {" "}
-      <Navbar></Navbar>
-      <div className="min-h-screen bg-gray-950 text-gray-100 pt-24 px-4 pb-12">
-        <div className="max-w-7xl mx-auto mb-8">
-          <div className="bg-gray-900/50 rounded-xl p-8 border border-gray-800">
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="relative">
-                <img
-                  src={
-                    profileData?.profile_pic_url ||
-                    "https://tse2.mm.bing.net/th?id=OIP.7cRYFyLoDEDh4sRtM73vvwHaDg&pid=Api&P=0&h=180"
-                  }
-                  alt={profileData?.full_name || "Profile Picture"}
-                  className="w-24 h-24 rounded-full border-4 border-blue-500/20"
-                />
-                <div className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-4 border-gray-900"></div>
-              </div>
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold mb-2">
-                  {profileData?.full_name || "No Name"}
-                </h1>
-                <p className="text-xl text-gray-400 mb-4">
-                  {profileData?.headline || "No Headline"}
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  {(profileData?.city || profileData?.country) && (
-                    <div className="flex items-center text-gray-400">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      {[profileData?.city, profileData?.country]
-                        .filter(Boolean)
-                        .join(", ")}
-                    </div>
-                  )}
-                  {profileData?.connections && (
-                    <div className="flex items-center text-gray-400">
-                      <User className="w-4 h-4 mr-2" />
-                      {profileData.connections} connections
-                    </div>
-                  )}
-                  {profileData?.company && (
-                    <div className="flex items-center text-gray-400">
-                      <Building className="w-4 h-4 mr-2" />
-                      {profileData.company}
-                    </div>
-                  )}
-                </div>
-              </div>
+    <div className="mx-auto max-w-7xl space-y-8">
+      {/* Welcome */}
+      <section className="neon-border card relative overflow-hidden rounded-3xl p-6 sm:p-8">
+        <div className="grid-bg absolute inset-0 opacity-50" aria-hidden="true" />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="kicker mb-3">Dashboard</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Welcome back{firstName ? <>, <span className="neon-text">{firstName}</span></> : ""}
+            </h1>
+            <p className="mt-2 text-sm text-slate-500">
+              {profile.headline || "Add a headline to your profile so recruiters know what you do."}
+            </p>
+            {(profile.city || profile.country) && (
+              <p className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                <MapPin size={13} /> {[profile.city, profile.country].filter(Boolean).join(", ")}
+              </p>
+            )}
+          </div>
+          <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-ink-950/60 p-5">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-semibold text-slate-900">Profile strength</span>
+              <span className="font-display font-bold text-brand">{score.percent}%</span>
             </div>
+            <div className="mt-3 h-2 rounded-full bg-slate-100">
+              <div className="h-full rounded-full bg-gradient-to-r from-brand to-accent transition-all duration-700" style={{ width: `${score.percent}%` }} />
+            </div>
+            {score.missing.length ? (
+              <p className="mt-3 text-xs text-slate-500">
+                Missing: {score.missing.slice(0, 3).join(", ")}
+                {score.missing.length > 3 ? ` +${score.missing.length - 3}` : ""} ·{" "}
+                <Link href="/profile" className="text-brand hover:text-slate-900">Complete profile</Link>
+              </p>
+            ) : (
+              <p className="mt-3 flex items-center gap-1.5 text-xs text-emerald-700"><CheckCircle2 size={13} /> Your profile is complete.</p>
+            )}
           </div>
         </div>
+      </section>
 
-        {/* Main Content Grid */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Experience Card */}
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
-            <button
-              onClick={() => toggleSection("experience")}
-              className="w-full p-6 flex justify-between items-center hover:bg-gray-800/30 transition-colors"
-            >
-              <h2 className="flex items-center space-x-2 text-xl font-semibold">
-                <Briefcase className="h-6 w-6 text-blue-500" />
-                <span>Experience</span>
-              </h2>
-              {openSections.experience ? (
-                <ChevronUp className="h-5 w-5 text-gray-400" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-400" />
-              )}
-            </button>
-            {openSections.experience && (
-              <div className="p-6 pt-0">
-                <div className="space-y-6">
-                  {profileData?.experiences?.map((exp, index) => (
-                    <div
-                      key={index}
-                      className="relative pl-6 pb-6 border-l border-gray-800 last:pb-0"
-                    >
-                      <div className="absolute left-0 top-0 w-2 h-2 -translate-x-1 bg-blue-500 rounded-full"></div>
-                      <h3 className="font-semibold text-lg">{exp?.title}</h3>
-                      <p className="text-gray-400">{exp?.company}</p>
-                      <div className="flex items-center text-sm text-gray-500 mt-1">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {formatDate(exp?.starts_at)} -{" "}
-                        {exp?.ends_at ? formatDate(exp.ends_at) : "Present"}
-                      </div>
-                      {exp?.description && (
-                        <p className="mt-2 text-gray-400 text-sm">
-                          {exp.description}
-                        </p>
+      <Alert>{profileError || error}</Alert>
+
+      {/* Stats */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard icon={ClipboardList} label="Applications" value={counts.total} hint="Jobs you've applied to" />
+        <StatCard icon={MessagesSquare} label="Interviewing" value={counts.interviewed} hint="Moved to interview" accent="violet" />
+        <StatCard icon={Trophy} label="Offers" value={counts.offered} hint="Offers received" accent="lime" />
+        <StatCard icon={Sparkles} label="Skills" value={profile.skills.length} hint="On your profile" accent="pink" />
+      </div>
+
+      {/* Quick actions */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {QUICK_ACTIONS.map(({ href, label, icon: Icon, tone }) => (
+          <Link key={href} href={href} className="card card-hover flex items-center gap-3 p-4">
+            <span className={`grid h-10 w-10 place-items-center rounded-xl bg-slate-100 ${tone}`}><Icon size={18} /></span>
+            <span className="text-sm font-semibold text-slate-900">{label}</span>
+          </Link>
+        ))}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        {/* Recommended */}
+        <section className="card p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Recommended for you</h2>
+            <Link href="/jobs" className="btn-link">All jobs <ArrowRight size={14} /></Link>
+          </div>
+          {loading ? (
+            <p className="text-sm text-slate-500">Loading jobs…</p>
+          ) : recommended.length ? (
+            <ul className="space-y-3">
+              {recommended.map(({ job, matched }) => (
+                <li key={job._id}>
+                  <Link href={`/jobs/${job._id}`} className="flex items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-ink-950/40 p-4 transition hover:border-brand/40">
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-slate-900">{job.title}</p>
+                      <p className="mt-0.5 truncate text-xs text-slate-500">{job.name} · {job.location} · {job.jobType}</p>
+                      {matched.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {matched.slice(0, 4).map((skill) => <span key={skill} className="chip !text-[10px]">{skill}</span>)}
+                        </div>
                       )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+                    <span className="shrink-0 text-xs text-slate-500">{timeAgo(job.createdAt)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-slate-500">No open roles right now. Check the remote feed on the jobs page.</p>
+          )}
+        </section>
 
-          {/* Education Card */}
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
-            <button
-              onClick={() => toggleSection("education")}
-              className="w-full p-6 flex justify-between items-center hover:bg-gray-800/30 transition-colors"
-            >
-              <h2 className="flex items-center space-x-2 text-xl font-semibold">
-                <GraduationCap className="h-6 w-6 text-blue-500" />
-                <span>Education</span>
-              </h2>
-              {openSections.education ? (
-                <ChevronUp className="h-5 w-5 text-gray-400" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-400" />
-              )}
-            </button>
-            {openSections.education && (
-              <div className="p-6 pt-0">
-                <div className="space-y-6">
-                  {profileData?.education?.map((edu, index) => (
-                    <div
-                      key={index}
-                      className="relative pl-6 pb-6 border-l border-gray-800 last:pb-0"
-                    >
-                      <div className="absolute left-0 top-0 w-2 h-2 -translate-x-1 bg-blue-500 rounded-full"></div>
-                      <h3 className="font-semibold text-lg">{edu?.school}</h3>
-                      <p className="text-gray-400">{edu?.degree_name}</p>
-                      <p className="text-gray-400 text-sm">
-                        {edu?.field_of_study}
-                      </p>
-                      <div className="flex items-center text-sm text-gray-500 mt-1">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {formatDate(edu?.starts_at)} -{" "}
-                        {edu?.ends_at ? formatDate(edu.ends_at) : "Present"}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+        {/* Recent applications */}
+        <section className="card p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Recent applications</h2>
+            <Link href="/applications" className="btn-link">View all <ArrowRight size={14} /></Link>
           </div>
-
-          {/* Skills Card */}
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
-            <button
-              onClick={() => toggleSection("skills")}
-              className="w-full p-6 flex justify-between items-center hover:bg-gray-800/30 transition-colors"
-            >
-              <h2 className="flex items-center space-x-2 text-xl font-semibold">
-                <Code className="h-6 w-6 text-blue-500" />
-                <span>Skills</span>
-              </h2>
-              {openSections.skills ? (
-                <ChevronUp className="h-5 w-5 text-gray-400" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-400" />
-              )}
-            </button>
-            {openSections.skills && (
-              <div className="p-6 pt-0">
-                <div className="flex flex-wrap gap-2">
-                  {profileData?.skills?.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-sm border border-blue-500/20"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Certifications Card */}
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
-            <button
-              onClick={() => toggleSection("certifications")}
-              className="w-full p-6 flex justify-between items-center hover:bg-gray-800/30 transition-colors"
-            >
-              <h2 className="flex items-center space-x-2 text-xl font-semibold">
-                <Award className="h-6 w-6 text-blue-500" />
-                <span>Certifications</span>
-              </h2>
-              {openSections.certifications ? (
-                <ChevronUp className="h-5 w-5 text-gray-400" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-400" />
-              )}
-            </button>
-            {openSections.certifications && (
-              <div className="p-6 pt-0">
-                <div className="space-y-4">
-                  {profileData?.certifications?.map((cert, index) => (
-                    <div key={index} className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                        <FileText className="w-6 h-6 text-blue-500" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold">{cert?.name}</h3>
-                        <p className="text-gray-400 text-sm">{cert?.issuer}</p>
-                        {cert?.url && (
-                          <a
-                            href={cert.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center text-blue-500 text-sm mt-1 hover:underline"
-                          >
-                            <Link className="w-4 h-4 mr-1" />
-                            View Certificate
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="w-4/5 mx-auto bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden mt-6 mb-8 shadow-lg">
-          <div className="p-6 pt-4">
-            <div className="space-y-6">
-              <div className="relative pl-6 border-l border-gray-800">
-                <div className="absolute left-[-8px] top-0 w-3 h-3 -translate-x-1 bg-blue-500 rounded-full"></div>
-                <p className="text-gray-400 text-lg leading-relaxed">
-                  {profileData?.summary || "No summary available"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+          {applications.length ? (
+            <ul className="divide-y divide-slate-100">
+              {applications.slice(0, 5).map((item) => (
+                <li key={item._id} className="flex items-center justify-between gap-3 py-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-slate-900">{item.job?.title || "Job no longer listed"}</p>
+                    <p className="text-xs text-slate-500">{item.job?.name} · {formatDate(item.createdAt)}</p>
+                  </div>
+                  <StatusBadge status={item.status} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-slate-500">You haven&apos;t applied anywhere yet.</p>
+          )}
+        </section>
       </div>
-    </>
-  );
-};
 
-export default Dashboard;
+      {/* Skills */}
+      {profile.skills.length > 0 && (
+        <section className="card p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Your skills</h2>
+            <Link href="/learning" className="btn-link">Learning paths <ArrowRight size={14} /></Link>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {profile.skills.map((skill) => <span key={skill} className="chip">{skill}</span>)}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}

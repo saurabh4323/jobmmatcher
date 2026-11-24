@@ -1,156 +1,119 @@
 "use client";
-import React from "react";
-import { 
-  BookOpen, 
-  Brain, 
-  Cpu, 
-  Database, 
-  Layout, 
-  Code, 
-  CheckCircle,
-  TrendingUp,
-  Search
-} from "lucide-react";
-import Link from "next/link";
-import Navbar from "@/components/Navbar";
 
-const LearningHub = () => {
-  const courses = [
-    {
-      id: "scikit-learn",
-      title: "Scikit-Learn Fundamentals",
-      category: "Machine Learning",
-      icon: Cpu,
-      level: "Intermediate",
-      duration: "4 hours",
-      description: "Master the most popular ML library for Python. Learn classification, regression, and model evaluation.",
-      progress: 0,
-      color: "blue"
-    },
-    {
-      id: "react-basics",
-      title: "React Modern Patterns",
-      category: "Frontend Development",
-      icon: Layout,
-      level: "Beginner",
-      duration: "6 hours",
-      description: "Build dynamic user interfaces with Hooks, Context API, and modern React best practices.",
-      progress: 0,
-      color: "purple"
-    },
-    {
-      id: "python-automation",
-      title: "Python for Automation",
-      category: "Scripting",
-      icon: Code,
-      level: "Beginner",
-      duration: "3 hours",
-      description: "Automate repetitive tasks and streamline your workflow using Python's extensive standard library.",
-      progress: 100,
-      color: "green"
-    },
-    {
-      id: "sql-mastery",
-      title: "Advanced SQL & Database Design",
-      category: "Data Engineering",
-      icon: Database,
-      level: "Hard",
-      duration: "5 hours",
-      description: "Complex queries, indexing strategies, and database schema design for performance.",
-      progress: 45,
-      color: "orange"
-    }
-  ];
+import Link from "next/link";
+import { useState } from "react";
+import { ArrowRight, BookOpenText, Cpu, MessagesSquare, PlayCircle, Search, Server, Sparkles } from "lucide-react";
+import { TOPICS, TOPIC_CATEGORIES, topicsForSkills } from "@/lib/topics";
+import { useProfile } from "@/lib/profile";
+import { PageHeader } from "@/components/ui";
+
+const COURSES = [
+  {
+    href: "/learning/scikit-learn",
+    title: "Scikit-learn fundamentals",
+    text: "Train a classifier, evaluate it, and run real Python in the browser.",
+    icon: Cpu,
+    tag: "Machine learning",
+  },
+  {
+    href: "/learning/scikit-learn/fastapi-demo",
+    title: "Serve a model with FastAPI",
+    text: "Call a live prediction API from the UI and see how ML services fit together.",
+    icon: Server,
+    tag: "MLOps",
+  },
+];
+
+export default function LearningPage() {
+  const { profile } = useProfile();
+  const [category, setCategory] = useState("All");
+  const [query, setQuery] = useState("");
+
+  const recommended = topicsForSkills(profile.skills);
+  const q = query.trim().toLowerCase();
+  const visible = TOPICS.filter((topic) => (category === "All" || topic.category === category) && (!q || topic.name.toLowerCase().includes(q)));
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
-      <Navbar />
-      <main className="pt-24 pb-12 px-4 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Learning Hub</h1>
-            <p className="text-gray-400">Expand your skillset with personalized technical courses.</p>
-          </div>
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Search courses..." 
-              className="pl-10 pr-4 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-blue-500 w-full md:w-64 transition-all"
-            />
-          </div>
-        </div>
+    <div className="mx-auto max-w-7xl space-y-10">
+      <PageHeader kicker="Learning" title="Level up" description="Hands-on courses and curated paths. Recommendations come from the skills on your profile." />
 
-        {/* Categories */}
-        <div className="flex flex-wrap gap-3 mb-12">
-          {["All Courses", "Machine Learning", "Frontend", "Backend", "Data Science", "DevOps"].map((cat) => (
-            <button key={cat} className="px-4 py-1.5 rounded-full text-sm font-medium border border-gray-800 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all">
-              {cat}
-            </button>
-          ))}
-        </div>
+      <section>
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold"><Sparkles size={18} className="text-accent" /> Recommended for you</h2>
+        {recommended.length ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {recommended.slice(0, 4).map((topic) => <TopicCard key={topic.slug} topic={topic} highlight />)}
+          </div>
+        ) : (
+          <div className="card p-6 text-sm text-slate-500">
+            Add skills like Python, React, or Java to your <Link href="/profile" className="font-semibold text-brand">profile</Link> and we&apos;ll suggest matching paths here.
+          </div>
+        )}
+      </section>
 
-        {/* Course Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {courses.map((course) => (
-            <Link key={course.id} href={`/learning/${course.id}`} className="group h-full">
-              <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden h-full flex flex-col hover:border-blue-500/30 transition-all transform hover:-translate-y-1 shadow-lg shadow-black/20">
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className={`p-3 rounded-lg bg-${course.color}-600/10`}>
-                      <course.icon className={`h-6 w-6 text-${course.color}-500`} />
-                    </div>
-                    {course.progress === 100 && (
-                      <span className="flex items-center text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">
-                        <CheckCircle className="h-3 w-3 mr-1" /> COMPLETED
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-2">{course.category}</div>
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-blue-400 transition-colors">{course.title}</h3>
-                  <p className="text-gray-400 text-sm mb-6 flex-grow">{course.description}</p>
-                  
-                  <div className="flex items-center justify-between text-xs text-gray-500 border-t border-gray-800 pt-4">
-                    <span className="flex items-center">
-                      <TrendingUp className="h-3 w-3 mr-1" /> {course.level}
-                    </span>
-                    <span className="flex items-center">
-                      <BookOpen className="h-3 w-3 mr-1" /> {course.duration}
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Progress Bar */}
-                {course.progress > 0 && course.progress < 100 && (
-                  <div className="w-full bg-gray-800 h-1 mt-auto">
-                    <div className="bg-blue-600 h-full" style={{ width: `${course.progress}%` }}></div>
-                  </div>
-                )}
+      <section>
+        <h2 className="mb-4 text-lg font-semibold">Interactive courses</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          {COURSES.map(({ href, title, text, icon: Icon, tag }) => (
+            <Link key={href} href={href} className="neon-border card card-hover group flex items-start gap-5 rounded-3xl p-6">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-brand/30 bg-brand/10 text-brand"><Icon size={22} /></span>
+              <div>
+                <span className="chip-muted mb-2">{tag}</span>
+                <h3 className="text-lg font-semibold">{title}</h3>
+                <p className="mt-1 text-sm text-slate-500">{text}</p>
+                <span className="btn-link mt-3">Open course <ArrowRight size={14} className="transition group-hover:translate-x-1" /></span>
               </div>
             </Link>
           ))}
         </div>
+      </section>
 
-        {/* AI Recommendation */}
-        <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-800/30 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8">
-          <div className="h-20 w-20 bg-blue-600/20 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
-            <Brain className="h-10 w-10 text-blue-500" />
+      <section>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-semibold">All learning paths</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            {["All", ...TOPIC_CATEGORIES].map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setCategory(item)}
+                aria-pressed={category === item}
+                className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${category === item ? "border-brand/50 bg-brand/10 text-slate-900" : "border-slate-200 text-slate-500 hover:text-slate-900"}`}
+              >
+                {item}
+              </button>
+            ))}
+            <label className="relative">
+              <span className="sr-only">Search paths</span>
+              <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search…" className="input w-44 py-1.5 pl-8 text-xs" />
+            </label>
           </div>
-          <div className="flex-1 text-center md:text-left">
-            <h2 className="text-2xl font-bold mb-2">AI-Powered Curriculum</h2>
-            <p className="text-gray-400 max-w-2xl">Based on your LinkedIn profile and skills analysis, we recommend starting with <span className="text-blue-400 font-bold">Scikit-Learn Fundamentals</span> to boost your Machine Learning score.</p>
-          </div>
-          <Link href="/learning/scikit-learn" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition-all shadow-lg shadow-blue-600/20 flex-shrink-0">
-            Start Personalized Path
-          </Link>
         </div>
-      </main>
-
-      {/* Tailwind color mapping for dynamic classes */}
-      <div className="hidden bg-blue-600/10 text-blue-500 bg-purple-600/10 text-purple-500 bg-green-600/10 text-green-500 bg-orange-600/10 text-orange-500"></div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {visible.map((topic) => <TopicCard key={topic.slug} topic={topic} />)}
+        </div>
+        {!visible.length && <p className="py-10 text-center text-sm text-slate-500">No paths match “{query}”.</p>}
+      </section>
     </div>
   );
-};
+}
 
-export default LearningHub;
+function TopicCard({ topic, highlight = false }) {
+  return (
+    <article className={`card flex flex-col p-5 ${highlight ? "!border-accent/40" : ""}`}>
+      <p className="text-xs text-slate-500">{topic.category}</p>
+      <h3 className="mt-1 font-semibold text-slate-900">{topic.name}</h3>
+      <div className="mt-4 flex flex-1 flex-col justify-end gap-1.5 text-sm">
+        <a href={`https://www.youtube.com/watch?v=${topic.video}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-500 hover:text-brand">
+          <PlayCircle size={15} /> Video tutorial
+        </a>
+        <a href={topic.docs} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-slate-500 hover:text-brand">
+          <BookOpenText size={15} /> Documentation
+        </a>
+        <Link href={`/interview/${topic.slug}`} className="flex items-center gap-2 text-slate-500 hover:text-accent">
+          <MessagesSquare size={15} /> Mock interview
+        </Link>
+      </div>
+    </article>
+  );
+}

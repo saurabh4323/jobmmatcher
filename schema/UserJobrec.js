@@ -24,6 +24,21 @@ const userSchemarec = new mongoose.Schema({
     required: [true, "Password is required"],
     minlength: [6, "Password must be at least 6 characters"],
   },
+  company: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+  website: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+  about: {
+    type: String,
+    trim: true,
+    default: "",
+  },
   createdAt: {
     type: Date,
     default: Date.now,

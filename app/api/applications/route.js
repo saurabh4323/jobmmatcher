@@ -1,107 +1,65 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import connectDB from "@/config/connect";
+import { clean, getSession, isEmail, jsonError, requireSession } from "@/lib/auth";
 import Job from "@/schema/Job";
 import JobsApplied from "@/schema/Jobsapplied";
 
-export async function GET(request) {
-  const recruiterEmail = request.nextUrl.searchParams
-    .get("recruiterEmail")
-    ?.trim()
-    .toLowerCase();
-
-  if (!recruiterEmail) {
-    return NextResponse.json(
-      { error: "Recruiter email is required." },
-      { status: 400 }
-    );
-  }
-
+// Signed-in candidate's own applications.
+export async function GET() {
+  const { session, error } = await requireSession("candidate");
+  if (error) return error;
   try {
     await connectDB();
-    const ownedJobs = await Job.find({ recruiterEmail })
-      .select("_id title name")
+    const applications = await JobsApplied.find({ email: session.email }).sort({ createdAt: -1 }).lean();
+    const jobs = await Job.find({ _id: { $in: applications.map((item) => item.jobId) } })
+      .select("title name location jobType status")
       .lean();
-    const jobsById = new Map(ownedJobs.map((item) => [String(item._id), item]));
-
-    if (ownedJobs.length === 0) return NextResponse.json([], { status: 200 });
-
-    const applications = await JobsApplied.find({
-      jobId: { $in: ownedJobs.map((item) => item._id) },
-    })
-      .sort({ createdAt: -1 })
-      .lean();
-
-    return NextResponse.json(
-      applications.map((application) => {
-        const relatedJob = jobsById.get(String(application.jobId));
-        return {
-          ...application,
-          jobTitle: relatedJob?.title || "Job posting",
-          company: relatedJob?.name || "",
-        };
-      }),
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Error loading job applications:", error);
-    return NextResponse.json(
-      { error: "Unable to load applications right now." },
-      { status: 500 }
-    );
+    const byId = new Map(jobs.map((job) => [String(job._id), job]));
+    return NextResponse.json({
+      applications: applications.map((item) => ({ ...item, job: byId.get(String(item.jobId)) || null })),
+    });
+  } catch (err) {
+    console.error("Candidate applications error:", err);
+    return jsonError("Unable to load your applications.", 500);
   }
 }
 
+// Public: anyone with a job link can apply. Signed-in candidates apply with their account email.
 export async function POST(request) {
   try {
-    const body = await request.json();
-    const fullName = typeof body.fullName === "string" ? body.fullName.trim() : "";
-    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
-    const phone = typeof body.phone === "string" ? body.phone.trim() : "";
-    const resumeUrl = typeof body.resumeUrl === "string" ? body.resumeUrl.trim() : "";
-    const coverLetter = typeof body.coverLetter === "string" ? body.coverLetter.trim() : "";
+    const session = await getSession();
+    const body = await request.json().catch(() => ({}));
+    const fullName = clean(body.fullName, 120);
+    const email = (session?.role === "candidate" ? session.email : clean(body.email, 200)).toLowerCase();
+    const phone = clean(body.phone, 40);
+    const resumeUrl = clean(body.resumeUrl, 500);
+    const coverLetter = clean(body.coverLetter, 5000);
     const { jobId } = body;
 
-    if (!mongoose.Types.ObjectId.isValid(jobId)) {
-      return NextResponse.json({ error: "This job link is invalid." }, { status: 400 });
-    }
-    if (!fullName || !/^\S+@\S+\.\S+$/.test(email)) {
-      return NextResponse.json(
-        { error: "Enter your name and a valid email address." },
-        { status: 400 }
-      );
-    }
+    if (!mongoose.Types.ObjectId.isValid(jobId)) return jsonError("This job link is invalid.");
+    if (!fullName || !isEmail(email)) return jsonError("Enter your name and a valid email address.");
     if (resumeUrl) {
       try {
-        const url = new URL(resumeUrl);
-        if (!/^https?:$/.test(url.protocol)) throw new Error("Unsupported protocol");
+        if (!/^https?:$/.test(new URL(resumeUrl).protocol)) throw new Error();
       } catch {
-        return NextResponse.json(
-          { error: "Resume link must be a valid http or https URL." },
-          { status: 400 }
-        );
+        return jsonError("Resume link must be a valid http or https URL.");
       }
     }
 
     await connectDB();
-    const job = await Job.findById(jobId).select("title name applicationDeadline");
-    if (!job) {
-      return NextResponse.json({ error: "This job is no longer available." }, { status: 404 });
-    }
+    const job = await Job.findById(jobId).select("title name applicationDeadline status");
+    if (!job) return jsonError("This job is no longer available.", 404);
+    if (job.status === "closed") return jsonError("This job is no longer accepting applications.", 410);
     if (job.applicationDeadline && job.applicationDeadline < new Date()) {
-      return NextResponse.json({ error: "The application deadline has passed." }, { status: 410 });
+      return jsonError("The application deadline has passed.", 410);
     }
-
-    const existingApplication = await JobsApplied.findOne({ jobId, email });
-    if (existingApplication) {
-      return NextResponse.json(
-        { error: "You have already applied to this job." },
-        { status: 409 }
-      );
+    if (await JobsApplied.exists({ jobId, email })) {
+      return jsonError("You have already applied to this job.", 409);
     }
 
     const application = await JobsApplied.create({
-      applicantId: email,
+      applicantId: session?.role === "candidate" ? session.sub : email,
       fullName,
       email,
       phone,
@@ -119,11 +77,8 @@ export async function POST(request) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error("Error submitting job application:", error);
-    return NextResponse.json(
-      { error: "Unable to submit your application right now." },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error("Application submit error:", err);
+    return jsonError("Unable to submit your application right now.", 500);
   }
 }

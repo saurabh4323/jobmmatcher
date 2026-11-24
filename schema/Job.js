@@ -34,6 +34,11 @@ const JobSchema = new mongoose.Schema({
   salary: {
     type: String,
   },
+  status: {
+    type: String,
+    enum: ["open", "closed"],
+    default: "open",
+  },
   applicationDeadline: {
     type: Date,
   },

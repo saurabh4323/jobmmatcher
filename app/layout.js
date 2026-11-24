@@ -1,42 +1,33 @@
-"use client";
-import { Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import Navbarrec from "./recruiter/Navbar/Page";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import AppShell from "@/components/layout/AppShell";
+import { getSession, publicUser } from "@/lib/auth";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const display = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700", "800"], display: "swap" });
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
-export default function RootLayout({ children }) {
-  const [show, setshow] = useState(false);
-  const [theme, setTheme] = useState("light");
+export const metadata = {
+  title: { default: "Job Matcher — Build, practice, get hired", template: "%s · Job Matcher" },
+  description: "Build a standout resume, practice interviews with AI, and connect with recruiters.",
+  robots: "index, follow",
+};
 
-  useEffect(() => {
-    const login = localStorage.getItem("recid");
-    if (login) {
-      setshow(true);
-    }
-  }, []);
+export const viewport = { themeColor: "#ffffff" };
+
+export default async function RootLayout({ children }) {
+  const user = publicUser(await getSession());
 
   return (
-    <html data-theme={theme} lang="en">
-      <Head>
-        <title>Job Matcher</title>
-        <meta
-          name="description"
-          content="Build your resume and get insights."
-        />
-        <meta name="robots" content="index, follow" />
-      </Head>
-      <body className={`${geistMono.variable} antialiased`}>
-        {show ? <Navbarrec /> : <Navbar />}
-        <main>{children}</main>
-        <Footer />
+    <html lang="en" className={`${sans.variable} ${display.variable} ${mono.variable}`}>
+      <body>
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand focus:px-4 focus:py-2 focus:text-white">
+          Skip to content
+        </a>
+        <AuthProvider initialUser={user}>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
       </body>
     </html>
   );
